@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GLOU GLOU — natural wine, 2114 Spruce St, Philadelphia</title>
+<meta name="description" content="A natural wine shop on Spruce Street in Rittenhouse, Philadelphia. Four racks, four inks, four of us behind the counter. Tastings Thursday 6–9.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;600;800;900&family=Martian+Mono:wght@400;600;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+/* ───────────────────────────────────────────────────────────────
+   GLOU GLOU — four inks, one pass.
+   INK 1 FLUORO PINK  #FF3D7F   screen 15°
+   INK 2 ACID         #D7E03A   screen 75°
+   INK 3 AUBERGINE    #2E1A34   screen 45°
+   INK 4 MEDIUM BLUE  #1E4BA8   screen 00°
+   STOCK KRAFT        #E9DCC0   never left bare
+   ─────────────────────────────────────────────────────────────── */
+
+:root{
+  --pink:#FF3D7F;
+  --acid:#D7E03A;
+  --aub:#2E1A34;
+  --blue:#1E4BA8;
+  --paper:#E9DCC0;
+
+  --fl:76px;  /* frame, left  — carries the recipe */
+  --fr:48px;  /* frame, right — carries the name   */
+  --ft:46px;  /* frame, head  — carries the marks  */
+  --fb:56px;  /* frame, foot  — carries the wedge  */
+
+  --display:"Big Shoulders Display","Big Shoulders","Haettenschweiler","Arial Narrow",sans-serif;
+  --mono:"Martian Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --text:"Newsreader",Georgia,"Times New Roman",serif;
+}
+
+@media (max-width:860px){
+  :root{ --fl:46px; --fr:26px; --ft:34px; --fb:42px; }
+}
+
+*,*::before,*::after{ box-sizing:border-box; border-radius:0; }
+
+html{ background:var(--aub); }
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--aub);
+  font-family:var(--text);
+  font-size:17px;
+  line-height:1.44;
+  text-align:right;              /* never left. never centred. */
+  overflow-x:hidden;
+  cursor:crosshair;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+a{ color:inherit; cursor:pointer; }
+::selection{ background:var(--pink); color:var(--paper); }
+:focus-visible{ outline:3px solid var(--acid); outline-offset:2px; }
+
+/* ── INK SCREENS ─────────────────────────────────────────────────
+   A screen is two rulings crossed at ninety degrees and turned to
+   the ink's angle: one laid as ink, one cut as a mask. Where they
+   cross, ink sits on the stock. This is the press. Nothing here is
+   a filter over the top.                                           */
+.scr{
+  position:absolute; inset:0;
+  pointer-events:none;
+  mix-blend-mode:multiply;
+  --ink:var(--aub); --g:5px; --r:1.15px; --a:15deg;
+  --d:calc(var(--r) * 2);
+  background-image:repeating-linear-gradient(var(--a),
+    var(--ink) 0 var(--d), rgba(0,0,0,0) var(--d) var(--g));
+  -webkit-mask-image:repeating-linear-gradient(calc(var(--a) + 90deg),
+    #000 0 var(--d), rgba(0,0,0,0) var(--d) var(--g));
+  mask-image:repeating-linear-gradient(calc(var(--a) + 90deg),
+    #000 0 var(--d), rgba(0,0,0,0) var(--d) var(--g));
+}
+/* coarse mottle — ink sitting unevenly on the stock, inside the field */
+.scr--mottle{ --g:15px; --r:3.2px; opacity:.24; }
+
+/* ── THE FRAME. It works. It is not the space left over. ───────── */
+.frame{ position:fixed; inset:0; z-index:60; pointer-events:none; }
+.frame > *{ position:absolute; }
+
+.edge{ background:var(--aub); overflow:hidden; }
+.edge-top{ top:0; left:0; right:0; height:var(--ft); }
+.edge-bot{ bottom:0; left:0; right:0; height:var(--fb); }
+.edge-left{ top:0; bottom:0; left:0; width:var(--fl); }
+.edge-right{ top:0; bottom:0; right:0; width:var(--fr); }
+.edge .scr{ opacity:.5; }
+
+/* head: a slug line, run long, cut by the right edge */
+.slug{
+  position:absolute; inset:0;
+  display:flex; align-items:center; gap:1.5em;
+  padding-left:calc(var(--fl) + 10px);   /* clear of the recipe column */
+  font-family:var(--mono); font-weight:600;
+  font-size:9px; letter-spacing:.24em;
+  color:var(--acid);
+  white-space:nowrap;
+}
+.slug span{ flex:none; }
+.slug b{ color:var(--pink); font-weight:800; }
+.slug i{ color:var(--blue); font-style:normal; }
+
+/* foot: the step wedge. the recipe, printed. */
+.wedge{
+  position:absolute; inset:0;
+  display:flex; align-items:stretch;
+  padding:9px 10px 9px calc(var(--fl) + 6px);
+}
+.wedge span{ flex:1 1 0; min-width:0; }
+.wedge-cap{
+  position:absolute; right:calc(var(--fr) + 7px); top:50%;
+  transform:translateY(-50%);
+  font-family:var(--mono); font-weight:800;
+  font-size:8.5px; letter-spacing:.18em; color:var(--paper);
+  background:var(--aub); padding-left:11px;
+}
+
+/* left: the ink recipe, read bottom to top */
+.recipe{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  padding:0 0 calc(var(--fb) + 7px);
+}
+.chip{
+  display:flex; align-items:center; gap:6px;
+  padding:6px 0 6px 8px;
+  border-top:2px solid var(--aub);
+}
+.chip b{ width:17px; height:27px; display:block; flex:none; }
+.chip span{
+  writing-mode:vertical-rl; transform:rotate(180deg);
+  font-family:var(--mono); font-weight:600;
+  font-size:8px; letter-spacing:.16em; color:var(--paper);
+  white-space:nowrap; line-height:1;
+}
+@media (max-width:860px){
+  .chip span{ display:none; }
+  .chip{ padding-left:0; } .chip b{ width:100%; height:22px; }
+}
+
+/* right: the name, said again, bottom to top */
+.spine{
+  position:absolute; inset:0;
+  writing-mode:vertical-rl; transform:rotate(180deg);
+  display:flex; align-items:center; justify-content:flex-start;
+  padding-bottom:10px;
+  font-family:var(--display); font-weight:900;
+  font-size:clamp(16px,2.6vw,26px); letter-spacing:.06em;
+  line-height:var(--fr);
+  color:var(--acid);
+  white-space:nowrap;
+}
+.spine em{ font-style:normal; color:var(--pink); }
+
+/* registration targets, four corners */
+.reg{ width:17px; height:17px; z-index:2; }
+.reg::before,.reg::after{ content:""; position:absolute; background:var(--acid); }
+.reg::before{ left:50%; top:0; bottom:0; width:1px; margin-left:-.5px; }
+.reg::after{ top:50%; left:0; right:0; height:1px; margin-top:-.5px; }
+.reg i{ position:absolute; inset:3.5px; border:1px solid var(--pink); border-radius:50%; }
+.reg-tl{ top:calc(var(--ft)/2 - 8.5px); left:calc(var(--fl)/2 - 8.5px); }
+.reg-tr{ top:calc(var(--ft)/2 - 8.5px); right:calc(var(--fr)/2 - 8.5px); }
+.reg-bl{ bottom:calc(var(--fb)/2 - 8.5px); left:calc(var(--fl)/2 - 8.5px); }
+.reg-br{ bottom:calc(var(--fb)/2 - 8.5px); right:calc(var(--fr)/2 - 8.5px); }
+
+/* ── THE SHEET ───────────────────────────────────────────────── */
+.plate{ margin:var(--ft) var(--fr) var(--fb) var(--fl); position:relative; z-index:1; }
+.band{ position:relative; overflow:hidden; }
+.bleed{ margin-left:calc(-1 * var(--fl)); margin-right:calc(-1 * var(--fr)); }
+.inner{
+  position:relative; z-index:2;
+  padding:0 clamp(18px,4vw,54px);
+  margin-left:var(--fl); margin-right:var(--fr);
+}
+
+/* grounds — each field chosen first, then given a treatment */
+.g-acid { background:var(--acid);  color:var(--aub);   }
+.g-pink { background:var(--pink);  color:var(--aub);   }
+.g-aub  { background:var(--aub);   color:var(--paper); }
+.g-blue { background:var(--blue);  color:var(--paper); }
+.g-kraft{ background:var(--paper); color:var(--aub);   }
+
+/* no plain edge: every seam is set */
+.seam{
+  position:relative; z-index:3; height:14px;
+  background:repeating-linear-gradient(90deg, var(--aub) 0 9px, rgba(0,0,0,0) 9px 18px), var(--acid);
+}
+.seam--alt{
+  background:repeating-linear-gradient(90deg, var(--pink) 0 5px, rgba(0,0,0,0) 5px 10px), var(--aub);
+}
+
+/* ── TYPE ────────────────────────────────────────────────────── */
+.kicker{ font-family:var(--mono); font-weight:800; font-size:10px; letter-spacing:.28em; margin:0; }
+h2{
+  font-family:var(--display); font-weight:900;
+  font-size:clamp(2.1rem,5vw,3.7rem);
+  line-height:.87; letter-spacing:-.015em;
+  margin:.2em 0 .3em; text-transform:uppercase;
+}
+h3{
+  font-family:var(--display); font-weight:800;
+  font-size:clamp(1.3rem,2.2vw,1.72rem);
+  line-height:.92; letter-spacing:.012em; text-transform:uppercase; margin:0;
+}
+p{ margin:0 0 .85em; }
+.justify{ text-align:justify; text-align-last:right; hyphens:auto; max-width:62ch; margin-left:auto; }
+.lede{ font-size:clamp(1.02rem,1.45vw,1.18rem); }
+
+/* a block of running text gets a ground of its own */
+.slab{
+  position:relative; overflow:hidden;
+  padding:clamp(18px,2.4vw,30px) clamp(16px,2.2vw,28px);
+  border:3px solid var(--paper);
+}
+.slab p:last-child{ margin-bottom:0; }
+
+/* ── NAV ─────────────────────────────────────────────────────── */
+.nav{
+  display:flex; justify-content:flex-end; gap:0;
+  background:var(--aub);
+  margin-left:calc(-1 * var(--fl)); margin-right:calc(-1 * var(--fr));
+  padding-right:calc(var(--fr) + clamp(18px,4vw,54px));
+  padding-left:var(--fl);
+  border-bottom:3px solid var(--pink);
+}
+.nav a{
+  font-family:var(--mono); font-weight:800; font-size:10px; letter-spacing:.22em;
+  color:var(--acid); text-decoration:none; padding:11px 14px;
+  border-left:1px solid rgba(233,220,192,.28);
+  transition:background .12s steps(2), color .12s steps(2);
+}
+.nav a:nth-child(2){ color:var(--pink); }
+.nav a:hover{ background:var(--pink); color:var(--aub); }
+.nav a:nth-child(2):hover{ background:var(--acid); color:var(--aub); }
+
+/* ── MASTHEAD ────────────────────────────────────────────────── */
+.masthead{ padding:clamp(26px,4.4vw,52px) 0 0; }
+.wordrow{
+  display:flex; justify-content:center; align-items:baseline; gap:.04em;
+  margin:0 0 0 -12%; width:124%;      /* the frame will cut it */
+  font-family:var(--display); font-weight:900;
+  font-size:max(4.4rem,11.8vw);   /* no cap: the crop must hold at every width */
+  line-height:.79; letter-spacing:-.05em; white-space:nowrap;
+}
+.wordrow span{ display:block; mix-blend-mode:multiply; }
+.w1{ color:var(--pink); } .w2{ color:var(--blue); }
+.w3{ color:var(--aub); }  .w4{ color:var(--pink); }
+
+.mast-foot{
+  display:flex; flex-wrap:wrap; justify-content:flex-end; gap:5px 1.4em;
+  padding:14px 0 clamp(22px,3.2vw,38px);
+  font-family:var(--mono); font-weight:600; font-size:10px; letter-spacing:.19em;
+}
+.mast-foot em{ font-style:normal; color:var(--blue); }
+
+/* ── BAND HEADINGS ───────────────────────────────────────────── */
+.hd{ padding:clamp(24px,3.2vw,40px) 0 clamp(14px,1.8vw,22px); }
+.hd h2{ margin-top:.14em; }
+
+/* ── FOUR OF THE SAME: BOTTLES ───────────────────────────────── */
+.four{ display:grid; grid-template-columns:repeat(4,1fr); gap:0; margin:0; padding:0; list-style:none; border:3px solid var(--paper); }
+.four > li{ position:relative; overflow:hidden; padding:clamp(18px,2.4vw,30px) clamp(10px,1.4vw,20px) clamp(12px,1.8vw,20px); }
+.four > li + li{ border-left:3px solid var(--paper); }
+.four svg{ display:block; width:100%; height:auto; max-height:30vh; }
+.four .cap{
+  display:flex; justify-content:space-between; align-items:baseline;
+  margin-top:13px; padding-top:7px; border-top:2px solid currentColor;
+  font-family:var(--mono); font-weight:800; font-size:9.5px; letter-spacing:.16em;
+}
+@media (max-width:720px){
+  .four{ grid-template-columns:repeat(2,1fr); }
+  .four > li:nth-child(3){ border-left:0; }
+  .four > li:nth-child(n+3){ border-top:3px solid var(--paper); }
+}
+
+/* two columns of claims + running text, so no field is left over */
+.pair{
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(0,34rem);
+  gap:clamp(16px,2.6vw,34px); align-items:start;
+  padding:clamp(22px,3vw,36px) 0 clamp(26px,3.4vw,42px);
+}
+.pair--head{ grid-template-columns:minmax(0,1fr) minmax(0,27rem); padding-bottom:0; }
+.pair--head .slab{ margin-top:clamp(24px,3.2vw,40px); }
+.nots{ list-style:none; margin:0; padding:0; }
+.nots li{
+  font-family:var(--mono); font-weight:800; font-size:10px; letter-spacing:.17em;
+  padding:9px 0 8px; border-bottom:2px solid currentColor;
+}
+.nots li:first-child{ border-top:2px solid currentColor; }
+
+/* ── THE FOUR OF US — drawn, head on ─────────────────────────── */
+.faces{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:0;
+  margin:clamp(18px,2.4vw,30px) 0 0; padding:0; list-style:none;
+  border:3px solid var(--aub);
+}
+.faces li{ position:relative; overflow:hidden; padding:16px 10px 0; }
+.faces li + li{ border-left:3px solid var(--aub); }
+.faces svg{ display:block; width:100%; height:auto; margin-bottom:-5px; }
+.faces .nm{
+  position:absolute; left:0; right:0; top:0;
+  font-family:var(--mono); font-weight:800; font-size:9px;
+  letter-spacing:.2em; padding:6px 9px; text-align:right;
+}
+@media (max-width:720px){
+  .faces{ grid-template-columns:repeat(2,1fr); }
+  .faces li:nth-child(3){ border-left:0; }
+  .faces li:nth-child(n+3){ border-top:3px solid var(--aub); }
+}
+
+/* ── THE RACKS — four of the same, each flooded ──────────────── */
+.racks-hd{
+  display:grid; grid-template-columns:1fr auto; gap:clamp(18px,3vw,44px); align-items:end;
+  padding:clamp(24px,3.2vw,40px) 0 clamp(16px,2vw,24px);
+}
+.idx{ list-style:none; margin:0; padding:0; }
+.idx li{
+  font-family:var(--mono); font-weight:600; font-size:9.5px; letter-spacing:.17em;
+  padding:5px 0; border-bottom:1px solid rgba(233,220,192,.35);
+}
+@media (max-width:720px){ .racks-hd{ grid-template-columns:1fr; } .idx{ display:none; } }
+
+.racks-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0; border:3px solid var(--paper); }
+@media (max-width:860px){ .racks-grid{ grid-template-columns:1fr; } }
+.rack{ position:relative; overflow:hidden; }
+.rack:nth-child(2n){ border-left:3px solid var(--paper); }
+.rack:nth-child(n+3){ border-top:3px solid var(--paper); }
+@media (max-width:860px){
+  .rack:nth-child(2n){ border-left:0; }
+  .rack + .rack{ border-top:3px solid var(--paper); }
+}
+.rack-in{ position:relative; z-index:2; padding:clamp(16px,2vw,26px) clamp(15px,2vw,24px) clamp(16px,2.2vw,26px); }
+.rack-hd{
+  display:flex; justify-content:flex-end; align-items:center; gap:12px;
+  padding-bottom:8px; border-bottom:3px solid currentColor;
+}
+.rack-hd .no{
+  font-family:var(--mono); font-weight:800; font-size:9.5px; letter-spacing:.18em;
+  padding:4px 7px; background:currentColor;
+}
+.rack-hd .no em{ font-style:normal; }
+.row{ padding:11px 0 9px; border-bottom:2px solid currentColor; transition:background .1s steps(2), color .1s steps(2); }
+.rack .row:last-child{ border-bottom:0; }
+.row .l1{ display:flex; justify-content:flex-end; align-items:baseline; gap:16px; }
+.row .nme{ font-family:var(--display); font-weight:800; font-size:clamp(1.12rem,1.6vw,1.42rem); text-transform:uppercase; letter-spacing:.015em; line-height:1; }
+.row .pr{ font-family:var(--mono); font-weight:800; font-size:12px; letter-spacing:.02em; flex:none; }
+.row .l2{ margin:4px 0 0; font-family:var(--mono); font-weight:400; font-size:9.5px; letter-spacing:.13em; }
+.row:hover{ background:var(--hov); color:var(--hovc); }
+
+/* ── THURSDAY ────────────────────────────────────────────────── */
+.marquee{
+  overflow:hidden; white-space:nowrap;
+  padding:clamp(16px,2.2vw,26px) 0 clamp(10px,1.4vw,16px);
+  border-bottom:3px solid var(--acid);
+}
+.marquee div{ display:inline-block; animation:drift 28s linear infinite; }
+.marquee span{
+  font-family:var(--display); font-weight:900;
+  font-size:clamp(3rem,8.4vw,6.4rem); line-height:.84; letter-spacing:-.03em;
+  padding-right:.22em; mix-blend-mode:screen;
+}
+.marquee span:nth-child(4n+1){ color:var(--acid); }
+.marquee span:nth-child(4n+2){ color:var(--pink); }
+.marquee span:nth-child(4n+3){ color:var(--paper); }
+.marquee span:nth-child(4n+4){ color:var(--acid); }
+@keyframes drift{ to{ transform:translateX(-50%); } }
+
+.thu-body{
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(0,25rem);
+  gap:clamp(18px,3vw,40px); align-items:start;
+  padding:clamp(22px,2.8vw,34px) 0 clamp(26px,3.4vw,42px);
+}
+@media (max-width:860px){ .thu-body{ grid-template-columns:1fr; } }
+.signup{ display:flex; gap:0; border:3px solid var(--acid); }
+.signup input{
+  flex:1 1 auto; min-width:0; background:var(--aub); color:var(--paper); border:0;
+  padding:13px 12px; font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-align:right;
+}
+.signup input::placeholder{ color:rgba(233,220,192,.5); }
+.signup button{
+  flex:none; border:0; border-left:3px solid var(--acid);
+  background:var(--acid); color:var(--aub);
+  font-family:var(--mono); font-weight:800; font-size:10px; letter-spacing:.2em;
+  padding:13px 15px; cursor:pointer; transition:background .12s steps(2);
+}
+.signup button:hover{ background:var(--pink); }
+.note{ font-family:var(--mono); font-size:9px; letter-spacing:.17em; padding-top:9px; margin:0; }
+
+/* ── COLOPHON ────────────────────────────────────────────────── */
+.colophon{ padding:clamp(24px,3.2vw,40px) 0 clamp(30px,4.2vw,54px); }
+.inks{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:0;
+  margin:clamp(16px,2.2vw,26px) 0 clamp(22px,3vw,34px);
+  border:3px solid var(--paper);
+}
+.inks div{ padding:0 0 11px; }
+.inks div + div{ border-left:3px solid var(--paper); }
+.inks b{ display:block; height:clamp(54px,7vw,84px); position:relative; overflow:hidden; }
+.inks .lbl{ display:block; padding:9px 10px 0; font-family:var(--mono); font-weight:800; font-size:9px; letter-spacing:.15em; }
+.inks .hex{ display:block; padding:4px 10px 0; font-family:var(--mono); font-weight:400; font-size:9px; letter-spacing:.09em; color:var(--acid); }
+@media (max-width:720px){ .inks{ grid-template-columns:repeat(2,1fr); } .inks div:nth-child(3){ border-left:0; } .inks div:nth-child(n+3){ border-top:3px solid var(--paper); } }
+
+.visit{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:0;
+  border-top:3px solid var(--paper);
+}
+.visit div{ padding:clamp(16px,2vw,24px) clamp(12px,1.6vw,20px) 0; }
+.visit div + div{ border-left:3px solid var(--paper); }
+@media (max-width:720px){ .visit{ grid-template-columns:repeat(2,1fr); } .visit div:nth-child(3){ border-left:0; } .visit div:nth-child(n+3){ border-top:3px solid var(--paper); } }
+.visit h3{ color:var(--acid); margin-bottom:9px; }
+.visit p{ font-size:15px; margin:0; }
+.visit a{ text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:3px; text-decoration-color:var(--pink); }
+.visit a:hover{ color:var(--pink); }
+
+.endmark{ display:flex; justify-content:flex-end; gap:0; margin-top:clamp(20px,2.6vw,30px); }
+.endmark i{ display:block; width:clamp(26px,3.4vw,42px); height:clamp(26px,3.4vw,42px); }
+
+/* ── REGISTRATION ────────────────────────────────────────────── */
+.wordrow span{ transform:translate(var(--sx,0),var(--sy,0)); transition:transform .5s cubic-bezier(.2,.9,.2,1); }
+body.loading .w1{ --sx:-13px; --sy:7px; }
+body.loading .w2{ --sx:9px;  --sy:-6px; }
+body.loading .w3{ --sx:-5px; --sy:-9px; }
+body.loading .w4{ --sx:12px; --sy:5px; }
+.w2{ transition-delay:.07s; } .w3{ transition-delay:.14s; } .w4{ transition-delay:.21s; }
+
+.plate .scr{ transition:opacity .5s linear; }
+.plate .band:not(.registered) .scr{ opacity:.3; }
+.band:not(.registered) .four svg,
+.band:not(.registered) .faces svg{ transform:translateY(12px); }
+.four svg,.faces svg{ transition:transform .55s cubic-bezier(.2,.9,.2,1); }
+.four li:nth-child(2) svg,.faces li:nth-child(2) svg{ transition-delay:.06s; }
+.four li:nth-child(3) svg,.faces li:nth-child(3) svg{ transition-delay:.12s; }
+.four li:nth-child(4) svg,.faces li:nth-child(4) svg{ transition-delay:.18s; }
+
+/* ── NARROW STOCK ────────────────────────────────────────────── */
+@media (max-width:860px){
+  .pair,.pair--head{ grid-template-columns:1fr; }
+  .pair--head .slab{ margin-top:clamp(16px,3vw,24px); }
+}
+@media (max-width:720px){
+  /* justified setting needs a measure. Below one, set it ragged
+     left — still never flush left, still never centred. */
+  .justify{ text-align:right; text-align-last:auto; hyphens:none; }
+  .nav a{ padding:10px 9px; font-size:9px; letter-spacing:.13em; white-space:nowrap; }
+  .four svg{ max-height:24vh; }
+  .wedge-cap{ display:none; }
+  .wedge{ padding-left:calc(var(--fl) + 4px); }
+  .mast-foot{ font-size:9px; letter-spacing:.14em; }
+  .idx li,.nots li{ font-size:9px; letter-spacing:.12em; }
+  .row .l2{ font-size:8.5px; letter-spacing:.1em; }
+}
+@media (max-width:420px){
+  .nav a{ padding:10px 6px; font-size:8px; letter-spacing:.1em; }
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{ animation:none !important; transition:none !important; }
+  .plate .band:not(.registered) .scr{ opacity:1; }
+  .band:not(.registered) .four svg,.band:not(.registered) .faces svg{ transform:none; }
+}
+</style>
+</head>
+
+<body class="loading">
+
+<!-- ════ THE FRAME ════ the border is part of the work ════════ -->
+<div class="frame" aria-hidden="true">
+
+  <div class="edge edge-top">
+    <div class="scr" style="--ink:var(--blue);--a:0deg;--g:4px;--r:.9px"></div>
+    <div class="slug">
+      <span><b>GLOU GLOU</b> &nbsp;2114 SPRUCE ST</span>
+      <span>FOUR INKS &nbsp;/&nbsp; ONE PASS</span>
+      <span><i>RITTENHOUSE</i> &nbsp;PHILADELPHIA PA</span>
+      <span><b>GLOU GLOU</b> &nbsp;2114 SPRUCE ST</span>
+      <span>FOUR INKS &nbsp;/&nbsp; ONE PASS</span>
+      <span><i>RITTENHOUSE</i> &nbsp;PHILADELPHIA PA</span>
+      <span><b>GLOU GLOU</b> &nbsp;2114 SPRUCE ST</span>
+    </div>
+  </div>
+
+  <div class="edge edge-left">
+    <div class="scr" style="--ink:var(--pink);--a:15deg;--g:5px;--r:1.1px"></div>
+    <div class="recipe">
+      <div class="chip"><b style="background:var(--pink)"></b><span>FLUORO PINK · 15°</span></div>
+      <div class="chip"><b style="background:var(--acid)"></b><span>ACID · 75°</span></div>
+      <div class="chip"><b style="background:var(--aub);outline:1px solid var(--paper);outline-offset:-1px"></b><span>AUBERGINE · 45°</span></div>
+      <div class="chip"><b style="background:var(--blue)"></b><span>MEDIUM BLUE · 00°</span></div>
+      <div class="chip"><b style="background:var(--paper)"></b><span>STOCK · KRAFT</span></div>
+    </div>
+  </div>
+
+  <div class="edge edge-right">
+    <div class="scr" style="--ink:var(--blue);--a:45deg;--g:5px;--r:1.1px"></div>
+    <div class="spine">GLOU&nbsp;<em>GLOU</em>&nbsp;GLOU&nbsp;<em>GLOU</em>&nbsp;GLOU&nbsp;<em>GLOU</em>&nbsp;GLOU&nbsp;<em>GLOU</em></div>
+  </div>
+
+  <div class="edge edge-bot">
+    <div class="scr" style="--ink:var(--pink);--a:75deg;--g:4px;--r:.9px"></div>
+    <div class="wedge">
+      <span style="background:var(--pink)"></span><span style="background:var(--pink);opacity:.6"></span><span style="background:var(--pink);opacity:.3"></span>
+      <span style="background:var(--acid)"></span><span style="background:var(--acid);opacity:.6"></span><span style="background:var(--acid);opacity:.3"></span>
+      <span style="background:var(--paper)"></span><span style="background:var(--paper);opacity:.6"></span><span style="background:var(--paper);opacity:.3"></span>
+      <span style="background:var(--blue)"></span><span style="background:var(--blue);opacity:.6"></span><span style="background:var(--blue);opacity:.3"></span>
+      <span style="background:var(--pink)"></span><span style="background:var(--acid)"></span><span style="background:var(--blue)"></span><span style="background:var(--paper)"></span>
+    </div>
+    <div class="wedge-cap">DENSITY 1·2·3·4</div>
+  </div>
+
+  <div class="reg reg-tl"><i></i></div>
+  <div class="reg reg-tr"><i></i></div>
+  <div class="reg reg-bl"><i></i></div>
+  <div class="reg reg-br"><i></i></div>
+</div>
+
+
+<!-- ════ THE SHEET ═══════════════════════════════════════════ -->
+<main class="plate">
+
+  <nav class="nav">
+    <a href="#racks">RACKS</a>
+    <a href="#thursday">THURSDAY</a>
+    <a href="#four">THE FOUR</a>
+    <a href="#visit">VISIT</a>
+  </nav>
+
+  <!-- ── MASTHEAD ─────────────────────────────────────────── -->
+  <section class="band bleed g-acid masthead">
+    <div class="scr" style="--ink:var(--pink);--a:15deg;--g:6px;--r:1.5px"></div>
+    <div class="scr scr--mottle" style="--ink:var(--blue);--a:75deg"></div>
+
+    <h1 class="wordrow">
+      <span class="w1">GLOU</span>
+      <span class="w2">GLOU</span>
+      <span class="w3" aria-hidden="true">GLOU</span>
+      <span class="w4" aria-hidden="true">GLOU</span>
+    </h1>
+
+    <div class="inner">
+      <div class="mast-foot">
+        <span>NATURAL WINE</span>
+        <span><em>LOW INTERVENTION, HIGH TURNOVER</em></span>
+        <span>2114 SPRUCE ST</span>
+        <span>PHILADELPHIA PA 19103</span>
+        <span><em>TUE–SUN</em></span>
+      </div>
+    </div>
+  </section>
+
+  <div class="seam" aria-hidden="true"></div>
+
+  <!-- ── FOUR BOTTLES ─────────────────────────────────────── -->
+  <section class="band bleed g-blue">
+    <div class="scr" style="--ink:var(--aub);--a:45deg;--g:6px;--r:1.5px"></div>
+    <div class="scr scr--mottle" style="--ink:var(--pink);--a:15deg"></div>
+
+    <div class="inner">
+      <div class="hd">
+        <p class="kicker" style="color:var(--acid)">FOUR RACKS · FOUR BOTTLES OPEN · FOUR OF US</p>
+        <h2>Four racks.<br>That is the&nbsp;shop.</h2>
+      </div>
+
+      <ul class="four">
+        <li>
+          <svg viewBox="0 0 80 164" role="img" aria-label="Bottle, rack one"><g fill="var(--pink)"><path d="M31 2h18v30l10 18v114H21V50l10-18z"/></g><g fill="var(--acid)" style="mix-blend-mode:multiply"><rect x="26" y="78" width="28" height="40"/><rect x="31" y="2" width="18" height="13"/></g></svg>
+          <div class="cap"><span>01</span><span>BUBBLES</span></div>
+        </li>
+        <li>
+          <svg viewBox="0 0 80 164" role="img" aria-label="Bottle, rack two"><g fill="var(--acid)"><path d="M31 2h18v30l10 18v114H21V50l10-18z"/></g><g fill="var(--pink)" style="mix-blend-mode:multiply"><rect x="26" y="78" width="28" height="40"/><rect x="31" y="2" width="18" height="13"/></g></svg>
+          <div class="cap"><span>02</span><span>SKINS</span></div>
+        </li>
+        <li>
+          <svg viewBox="0 0 80 164" role="img" aria-label="Bottle, rack three"><g fill="var(--paper)"><path d="M31 2h18v30l10 18v114H21V50l10-18z"/></g><g fill="var(--pink)" style="mix-blend-mode:multiply"><rect x="26" y="78" width="28" height="40"/><rect x="31" y="2" width="18" height="13"/></g></svg>
+          <div class="cap"><span>03</span><span>CHILLED REDS</span></div>
+        </li>
+        <li>
+          <svg viewBox="0 0 80 164" role="img" aria-label="Bottle, rack four"><g fill="var(--aub)"><path d="M31 2h18v30l10 18v114H21V50l10-18z"/></g><g fill="var(--acid)" style="mix-blend-mode:multiply"><rect x="26" y="78" width="28" height="40"/><rect x="31" y="2" width="18" height="13"/></g></svg>
+          <div class="cap"><span>04</span><span>WHITES</span></div>
+        </li>
+      </ul>
+
+      <div class="pair">
+        <ul class="nots">
+          <li>NO HERBICIDE</li>
+          <li>NO FINING</li>
+          <li>NO FILTERING</li>
+          <li>NO ADDITIONS BUT SULPHUR</li>
+        </ul>
+        <div class="slab">
+          <div class="scr scr--mottle" style="--ink:var(--aub);--a:0deg;opacity:.3"></div>
+          <p class="justify lede" style="position:relative;z-index:2">Everything on the shelf is farmed without herbicide and made without additions past a little sulphur at bottling, and then only when the grower decided it needed it. Some of it is cloudy. Some of it smells like cider for ten minutes and then stops.</p>
+          <p class="justify lede" style="position:relative;z-index:2">We taste every bottle before it goes out, and when we have got it wrong we will tell you so and open something else.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="seam seam--alt" aria-hidden="true"></div>
+
+  <!-- ── THE FOUR OF US — drawn, head on ──────────────────── -->
+  <section class="band bleed g-pink" id="four">
+    <div class="scr" style="--ink:var(--acid);--a:75deg;--g:6px;--r:1.6px"></div>
+    <div class="scr scr--mottle" style="--ink:var(--aub);--a:45deg;opacity:.18"></div>
+
+    <div class="inner">
+      <div class="pair pair--head">
+        <div class="hd" style="padding-bottom:0">
+          <p class="kicker">BEHIND THE COUNTER</p>
+          <h2>Four of us.<br>Ask any of the&nbsp;four.</h2>
+        </div>
+        <div class="slab" style="border-color:var(--aub);background:var(--aub);color:var(--paper)">
+          <div class="scr scr--mottle" style="--ink:var(--blue);--a:15deg;mix-blend-mode:screen;opacity:.3"></div>
+          <p class="justify" style="position:relative;z-index:2">There are no seats and there is no list to study. There is a counter, four of us behind it, and whatever is open that day. Say roughly what you want — cold, red, sour, cheap, a present — and one of us will put a glass in your hand before you pay for anything.</p>
+        </div>
+      </div>
+
+      <ul class="faces" style="margin-bottom:clamp(26px,3.4vw,42px)">
+        <li style="background:var(--acid)">
+          <span class="nm" style="color:var(--aub)">MARISOL</span>
+          <svg viewBox="0 0 120 170" role="img" aria-label="Marisol, drawn head on">
+            <g fill="var(--aub)"><path d="M4 170v-36l36-16h40l36 16v36z"/><path d="M52 118v-18h16v18z"/><path d="M32 38 46 24h28l14 14v48L74 100H46L32 86z"/></g>
+            <g fill="var(--pink)" style="mix-blend-mode:multiply"><path d="M28 44 44 16h32l16 28v14l-8-10V32H36v20l-8 10z"/></g>
+            <g fill="var(--acid)"><rect x="45" y="56" width="10" height="8"/><rect x="65" y="56" width="10" height="8"/></g>
+            <g fill="var(--pink)"><rect x="52" y="80" width="16" height="5"/></g>
+            <g fill="var(--acid)"><path d="M50 120h20v14l-6 14h-8l-6-14z"/><rect x="58" y="148" width="4" height="14"/><rect x="49" y="162" width="22" height="6"/></g>
+            <g fill="var(--pink)"><path d="M53 134h14l-4 10h-6z"/></g>
+          </svg>
+        </li>
+        <li style="background:var(--blue)">
+          <span class="nm" style="color:var(--acid)">DEV</span>
+          <svg viewBox="0 0 120 170" role="img" aria-label="Dev, drawn head on">
+            <g fill="var(--paper)"><path d="M4 170v-36l36-16h40l36 16v36z"/><path d="M52 118v-18h16v18z"/><path d="M32 38 46 24h28l14 14v48L74 100H46L32 86z"/></g>
+            <g fill="var(--aub)" style="mix-blend-mode:multiply"><path d="M28 44 44 16h32l16 28v14l-8-10V32H36v20l-8 10z"/></g>
+            <g fill="var(--aub)"><rect x="45" y="56" width="10" height="8"/><rect x="65" y="56" width="10" height="8"/></g>
+            <g fill="var(--pink)"><rect x="52" y="80" width="16" height="5"/></g>
+            <g fill="var(--acid)" style="mix-blend-mode:multiply"><path d="M50 120h20v14l-6 14h-8l-6-14z"/><rect x="58" y="148" width="4" height="14"/><rect x="49" y="162" width="22" height="6"/></g>
+            <g fill="var(--pink)" style="mix-blend-mode:multiply"><path d="M53 134h14l-4 10h-6z"/></g>
+          </svg>
+        </li>
+        <li style="background:var(--aub)">
+          <span class="nm" style="color:var(--acid)">BRIDIE</span>
+          <svg viewBox="0 0 120 170" role="img" aria-label="Bridie, drawn head on">
+            <g fill="var(--acid)"><path d="M4 170v-36l36-16h40l36 16v36z"/><path d="M52 118v-18h16v18z"/><path d="M32 38 46 24h28l14 14v48L74 100H46L32 86z"/></g>
+            <g fill="var(--pink)" style="mix-blend-mode:multiply"><path d="M28 44 44 16h32l16 28v14l-8-10V32H36v20l-8 10z"/></g>
+            <g fill="var(--aub)"><rect x="45" y="56" width="10" height="8"/><rect x="65" y="56" width="10" height="8"/></g>
+            <g fill="var(--aub)"><rect x="52" y="80" width="16" height="5"/></g>
+            <g fill="var(--pink)" style="mix-blend-mode:multiply"><path d="M50 120h20v14l-6 14h-8l-6-14z"/><rect x="58" y="148" width="4" height="14"/><rect x="49" y="162" width="22" height="6"/></g>
+            <g fill="var(--paper)"><path d="M53 134h14l-4 10h-6z"/></g>
+          </svg>
+        </li>
+        <li style="background:var(--paper)">
+          <span class="nm" style="color:var(--aub)">OMAR</span>
+          <svg viewBox="0 0 120 170" role="img" aria-label="Omar, drawn head on">
+            <g fill="var(--pink)"><path d="M4 170v-36l36-16h40l36 16v36z"/><path d="M52 118v-18h16v18z"/><path d="M32 38 46 24h28l14 14v48L74 100H46L32 86z"/></g>
+            <g fill="var(--blue)" style="mix-blend-mode:multiply"><path d="M28 44 44 16h32l16 28v14l-8-10V32H36v20l-8 10z"/></g>
+            <g fill="var(--aub)"><rect x="45" y="56" width="10" height="8"/><rect x="65" y="56" width="10" height="8"/></g>
+            <g fill="var(--aub)"><rect x="52" y="80" width="16" height="5"/></g>
+            <g fill="var(--aub)" style="mix-blend-mode:multiply"><path d="M50 120h20v14l-6 14h-8l-6-14z"/><rect x="58" y="148" width="4" height="14"/><rect x="49" y="162" width="22" height="6"/></g>
+            <g fill="var(--pink)"><path d="M53 134h14l-4 10h-6z"/></g>
+          </svg>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="seam" aria-hidden="true"></div>
+
+  <!-- ── THE RACKS ────────────────────────────────────────── -->
+  <section class="band bleed g-aub" id="racks">
+    <div class="scr" style="--ink:var(--blue);--a:0deg;--g:6px;--r:1.9px;mix-blend-mode:screen;opacity:.45"></div>
+    <div class="scr scr--mottle" style="--ink:var(--pink);--a:15deg;mix-blend-mode:screen;opacity:.2"></div>
+
+    <div class="inner">
+      <div class="racks-hd">
+        <ul class="idx">
+          <li>RACK 01 &nbsp;·&nbsp; BUBBLES &nbsp;·&nbsp; FOUR BOTTLES</li>
+          <li>RACK 02 &nbsp;·&nbsp; SKINS &nbsp;·&nbsp; FOUR BOTTLES</li>
+          <li>RACK 03 &nbsp;·&nbsp; CHILLED REDS &nbsp;·&nbsp; FOUR BOTTLES</li>
+          <li>RACK 04 &nbsp;·&nbsp; WHITES WITH TEETH &nbsp;·&nbsp; FOUR BOTTLES</li>
+        </ul>
+        <div>
+          <p class="kicker" style="color:var(--pink)">ON THE SHELF THIS WEEK</p>
+          <h2 style="color:var(--acid)">Sixteen bottles.<br>Four at a&nbsp;time.</h2>
+        </div>
+      </div>
+
+      <div class="racks-grid">
+
+        <div class="rack g-pink" style="--hov:var(--aub);--hovc:var(--paper)">
+          <div class="scr" style="--ink:var(--acid);--a:75deg;--g:6px;--r:1.5px"></div>
+          <div class="rack-in">
+            <div class="rack-hd"><h3>Bubbles</h3><span class="no" style="color:var(--aub)"><em style="color:var(--pink)">RACK 01</em></span></div>
+            <div class="row"><div class="l1"><span class="nme">Charbonnel</span><span class="pr">$28</span></div><p class="l2">LOIRE · FR · CHENIN · PÉT-NAT</p></div>
+            <div class="row"><div class="l1"><span class="nme">Cascina Roveto</span><span class="pr">$32</span></div><p class="l2">PIEMONTE · IT · CORTESE · COL FONDO</p></div>
+            <div class="row"><div class="l1"><span class="nme">Weingut Halder</span><span class="pr">$36</span></div><p class="l2">PFALZ · DE · RIESLING · SEKT</p></div>
+            <div class="row"><div class="l1"><span class="nme">Finca Mimbres</span><span class="pr">$27</span></div><p class="l2">GREDOS · ES · ALBILLO · ANCESTRAL</p></div>
+          </div>
+        </div>
+
+        <div class="rack g-acid" style="--hov:var(--aub);--hovc:var(--paper)">
+          <div class="scr" style="--ink:var(--pink);--a:15deg;--g:6px;--r:1.5px"></div>
+          <div class="rack-in">
+            <div class="rack-hd"><h3>Skins</h3><span class="no" style="color:var(--aub)"><em style="color:var(--acid)">RACK 02</em></span></div>
+            <div class="row"><div class="l1"><span class="nme">Casa Lerma</span><span class="pr">$31</span></div><p class="l2">SICILIA · IT · CATARRATTO · 8 DAYS</p></div>
+            <div class="row"><div class="l1"><span class="nme">Weinhof Andl</span><span class="pr">$38</span></div><p class="l2">STEIERMARK · AT · PINOT GRIS · 21 DAYS</p></div>
+            <div class="row"><div class="l1"><span class="nme">Petit-Bois</span><span class="pr">$42</span></div><p class="l2">JURA · FR · SAVAGNIN · 14 DAYS</p></div>
+            <div class="row"><div class="l1"><span class="nme">Kakheti Co-op</span><span class="pr">$34</span></div><p class="l2">KAKHETI · GE · RKATSITELI · 6 MONTHS</p></div>
+          </div>
+        </div>
+
+        <div class="rack g-blue" style="--hov:var(--acid);--hovc:var(--aub)">
+          <div class="scr" style="--ink:var(--aub);--a:45deg;--g:6px;--r:1.5px"></div>
+          <div class="rack-in">
+            <div class="rack-hd"><h3>Chilled reds</h3><span class="no" style="color:var(--paper)"><em style="color:var(--blue)">RACK 03</em></span></div>
+            <div class="row"><div class="l1"><span class="nme">Clos de la Raie</span><span class="pr">$29</span></div><p class="l2">LOIRE · FR · GAMAY · WHOLE BUNCH</p></div>
+            <div class="row"><div class="l1"><span class="nme">Podere Sassano</span><span class="pr">$33</span></div><p class="l2">TOSCANA · IT · CILIEGIOLO</p></div>
+            <div class="row"><div class="l1"><span class="nme">Finca Mimbres</span><span class="pr">$26</span></div><p class="l2">GREDOS · ES · GARNACHA · OLD VINE</p></div>
+            <div class="row"><div class="l1"><span class="nme">Weingut Braun</span><span class="pr">$37</span></div><p class="l2">PFALZ · DE · SPÄTBURGUNDER</p></div>
+          </div>
+        </div>
+
+        <div class="rack g-aub" style="--hov:var(--acid);--hovc:var(--aub)">
+          <div class="scr" style="--ink:var(--pink);--a:0deg;--g:6px;--r:1.6px;mix-blend-mode:screen;opacity:.4"></div>
+          <div class="rack-in">
+            <div class="rack-hd"><h3>Whites with teeth</h3><span class="no" style="color:var(--acid)"><em style="color:var(--aub)">RACK 04</em></span></div>
+            <div class="row"><div class="l1"><span class="nme">La Combe Noire</span><span class="pr">$44</span></div><p class="l2">JURA · FR · CHARDONNAY · OUILLÉ</p></div>
+            <div class="row"><div class="l1"><span class="nme">Quinta do Corvo</span><span class="pr">$24</span></div><p class="l2">VINHO VERDE · PT · LOUREIRO</p></div>
+            <div class="row"><div class="l1"><span class="nme">Weingut Halder</span><span class="pr">$30</span></div><p class="l2">PFALZ · DE · RIESLING · TROCKEN</p></div>
+            <div class="row"><div class="l1"><span class="nme">Tenuta Frassina</span><span class="pr">$35</span></div><p class="l2">CAMPANIA · IT · FIANO</p></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="pair">
+        <ul class="nots" style="color:var(--acid)">
+          <li>RACKS TURN OVER TUESDAY</li>
+          <li>PRICES ARE SHELF PRICES</li>
+          <li>CORKAGE DOWN THE BLOCK IS $10</li>
+          <li>WE WILL HOLD A BOTTLE FOR FOUR DAYS</li>
+        </ul>
+        <p class="justify lede" style="margin:0">The racks turn over every Tuesday, so this is a snapshot and not a promise. Call the shop if you are coming in for something particular and we will put it under the counter with your name on a strip of masking tape.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="seam seam--alt" aria-hidden="true"></div>
+
+  <!-- ── THURSDAY ─────────────────────────────────────────── -->
+  <section class="band bleed g-blue" id="thursday">
+    <div class="scr" style="--ink:var(--aub);--a:45deg;--g:6px;--r:1.6px"></div>
+    <div class="scr scr--mottle" style="--ink:var(--pink);--a:15deg;opacity:.3"></div>
+
+    <div class="marquee" aria-hidden="true">
+      <div><span>THURSDAY</span><span>THURSDAY</span><span>THURSDAY</span><span>THURSDAY</span><span>THURSDAY</span><span>THURSDAY</span><span>THURSDAY</span><span>THURSDAY</span></div>
+    </div>
+
+    <div class="inner">
+      <div class="thu-body">
+        <div>
+          <p class="kicker" style="color:var(--acid)">EVERY THURSDAY · 6 TO 9 · $15 · NO BOOKING</p>
+          <h2>Four bottles&nbsp;open.<br>Stand up.</h2>
+          <p class="justify lede">Four bottles, poured until they are gone. Fifteen dollars gets you all four and the paper strip we write them down on. Most weeks it is one grower; some weeks it is four growers arguing with each other across a single grape. If you buy a bottle on the way out, the fifteen comes off.</p>
+        </div>
+        <div class="slab" style="border-color:var(--acid);margin-top:clamp(20px,2.6vw,32px)">
+          <div class="scr scr--mottle" style="--ink:var(--aub);--a:75deg;opacity:.3"></div>
+          <div style="position:relative;z-index:2">
+            <h3 style="color:var(--acid);margin-bottom:12px">Thursday note</h3>
+            <form class="signup" id="signup">
+              <input type="email" id="email" name="email" placeholder="YOUR EMAIL" aria-label="Your email address" required>
+              <button type="submit">ADD ME</button>
+            </form>
+            <p class="note" id="note" style="color:var(--acid)">ONE NOTE A WEEK. WHAT IS OPEN, NOTHING ELSE.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="seam" aria-hidden="true"></div>
+
+  <!-- ── COLOPHON / VISIT ─────────────────────────────────── -->
+  <footer class="band bleed g-aub colophon" id="visit">
+    <div class="scr" style="--ink:var(--acid);--a:75deg;--g:7px;--r:1.5px;mix-blend-mode:screen;opacity:.2"></div>
+    <div class="scr scr--mottle" style="--ink:var(--blue);--a:45deg;mix-blend-mode:screen;opacity:.2"></div>
+
+    <div class="inner">
+      <p class="kicker" style="color:var(--pink)">PRINTED IN FOUR INKS, ONE PASS, ON KRAFT</p>
+      <h2 style="color:var(--acid)">The recipe.</h2>
+
+      <div class="inks">
+        <div>
+          <b style="background:var(--pink)"><span class="scr" style="--ink:var(--aub);--a:15deg;--g:5px;--r:1.3px"></span></b>
+          <span class="lbl" style="color:var(--paper)">INK 1 · FLUORO PINK</span>
+          <span class="hex">#FF3D7F · SCREEN 15°</span>
+        </div>
+        <div>
+          <b style="background:var(--acid)"><span class="scr" style="--ink:var(--aub);--a:75deg;--g:5px;--r:1.3px"></span></b>
+          <span class="lbl" style="color:var(--paper)">INK 2 · ACID</span>
+          <span class="hex">#D7E03A · SCREEN 75°</span>
+        </div>
+        <div>
+          <b style="background:var(--aub);outline:2px solid var(--paper);outline-offset:-2px"><span class="scr" style="--ink:var(--paper);--a:45deg;--g:5px;--r:1.3px;mix-blend-mode:screen"></span></b>
+          <span class="lbl" style="color:var(--paper)">INK 3 · AUBERGINE</span>
+          <span class="hex">#2E1A34 · SCREEN 45°</span>
+        </div>
+        <div>
+          <b style="background:var(--blue)"><span class="scr" style="--ink:var(--aub);--a:0deg;--g:5px;--r:1.3px"></span></b>
+          <span class="lbl" style="color:var(--paper)">INK 4 · MEDIUM BLUE</span>
+          <span class="hex">#1E4BA8 · SCREEN 00°</span>
+        </div>
+      </div>
+
+      <div class="visit">
+        <div>
+          <h3>Where</h3>
+          <p>2114 Spruce Street<br>Philadelphia PA 19103<br>Four doors in from 21st.</p>
+        </div>
+        <div>
+          <h3>When</h3>
+          <p>Tue–Thu &nbsp;12–9<br>Fri–Sat &nbsp;12–10<br>Sun &nbsp;12–6<br>Mon &nbsp;shut</p>
+        </div>
+        <div>
+          <h3>Who</h3>
+          <p><a href="tel:+12155550164">(215) 555-0164</a><br><a href="mailto:pour@glouglou.wine">pour@glouglou.wine</a><br>Marisol, Dev, Bridie, Omar.</p>
+        </div>
+        <div>
+          <h3>The rule</h3>
+          <p>Taste it before you pay for it. If we got it wrong, we open another one.</p>
+        </div>
+      </div>
+
+      <div class="endmark" aria-hidden="true">
+        <i style="background:var(--pink)"></i>
+        <i style="background:var(--acid)"></i>
+        <i style="background:var(--blue)"></i>
+        <i style="background:var(--paper)"></i>
+      </div>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+/* the plate seats itself once the sheet is in */
+requestAnimationFrame(function(){
+  requestAnimationFrame(function(){ document.body.classList.remove('loading'); });
+});
+
+/* each band registers as it comes onto the press */
+var bands = document.querySelectorAll('.plate .band');
+if ('IntersectionObserver' in window) {
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting) { e.target.classList.add('registered'); io.unobserve(e.target); }
+    });
+  }, { rootMargin: '0px 0px -10% 0px', threshold: 0.06 });
+  bands.forEach(function(b){ io.observe(b); });
+} else {
+  bands.forEach(function(b){ b.classList.add('registered'); });
+}
+
+/* marquee: double the run so the loop has somewhere to go */
+var run = document.querySelector('.marquee div');
+if (run) { run.innerHTML = run.innerHTML + run.innerHTML; }
+
+/* thursday note */
+var form = document.getElementById('signup');
+if (form) {
+  form.addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var email = document.getElementById('email');
+    if (!email.value) return;
+    var note = document.getElementById('note');
+    note.textContent = 'ON THE LIST. FIRST NOTE GOES OUT THURSDAY.';
+    note.style.color = 'var(--pink)';
+    form.querySelector('button').textContent = 'DONE';
+    email.value = '';
+    email.disabled = true;
+  });
+}
+</script>
+</body>
+</html>
