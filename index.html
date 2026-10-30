@@ -80,6 +80,13 @@ a{ color:inherit; cursor:pointer; }
 /* coarse mottle — ink sitting unevenly on the stock, inside the field */
 .scr--mottle{ --g:15px; --r:3.2px; opacity:.24; }
 
+/* Dot size under type: a screen running behind small type needs dots
+   well under the stem width, or the letterforms lose their edges.
+   At 11px mono, 2.2px dots (--r:1.1) hold and 3px dots do not — and
+   no contrast ratio predicts this, because ratio measures value and
+   the problem is frequency. Anything coarser than that goes in an
+   open field, or the type knocks the screen out behind itself. */
+
 /* ── THE PRESS ───────────────────────────────────────────────────
    Each screen belongs to a plate. A plate can be pulled off the
    press, and the register can be slipped — every plate drifts its
@@ -276,9 +283,18 @@ p{ margin:0 0 .85em; }
 .w1{ color:var(--pink); } .w2{ color:var(--blue); }
 .w3{ color:var(--aub); }  .w4{ color:var(--pink); }
 
+/* You do not print 11px type through a 3px screen. The dots are the
+   size of the stems, so the letterforms lose their edges whatever
+   the contrast ratio says — ratio measures value, not frequency.
+   The screen knocks out behind the line, as it would on press. */
+.mast-strip{
+  position:relative; z-index:3;
+  background:var(--acid);
+  border-top:3px solid var(--aub);
+}
 .mast-foot{
   display:flex; flex-wrap:wrap; justify-content:flex-end; align-items:center; gap:7px 1.2em;
-  padding:16px 0 clamp(22px,3.2vw,38px);
+  padding:14px 0 16px;
   font-family:var(--mono); font-weight:600; font-size:11px; letter-spacing:.13em;
 }
 /* Blue type on acid is 4.0:1 — under AA. Setting it in aubergine
@@ -304,8 +320,9 @@ p{ margin:0 0 .85em; }
 .four > li > svg,.four > li > .cap{ position:relative; z-index:2; }
 .four .cap{
   display:flex; justify-content:space-between; align-items:baseline;
-  margin-top:13px; padding-top:7px; border-top:2px solid currentColor;
+  margin-top:13px; padding:7px 0 2px; border-top:2px solid currentColor;
   font-family:var(--mono); font-weight:800; font-size:11px; letter-spacing:.1em;
+  background:inherit;   /* each cap knocks out to its own panel's flat ink */
 }
 @media (max-width:720px){
   .four{ grid-template-columns:repeat(2,1fr); }
@@ -467,7 +484,10 @@ p{ margin:0 0 .85em; }
   margin:clamp(16px,2.2vw,26px) 0 clamp(22px,3vw,34px);
   border:3px solid var(--paper);
 }
-.inks div{ padding:0 0 11px; }
+/* In the colophon the screen is a light ink laid on a dark ground,
+   so its dots land at the same value as the paper type — 1.01:1.
+   The label blocks knock it out; the screen keeps the open field. */
+.inks div{ padding:0 0 11px; background:var(--aub); }
 .inks div + div{ border-left:3px solid var(--paper); }
 /* Ink laid on the plum ground cannot be read: aubergine against it
    is 1.2:1, blue 1.7:1 — the recipe could not show two of its own
@@ -488,7 +508,7 @@ p{ margin:0 0 .85em; }
 @media (max-width:720px){ .inks{ grid-template-columns:repeat(2,1fr); } .inks div:nth-child(3){ border-left:0; } .inks div:nth-child(n+3){ border-top:3px solid var(--paper); } }
 
 /* ── THE PRESS PANEL ─────────────────────────────────────────── */
-.press{ border:3px solid var(--paper); margin-bottom:clamp(22px,3vw,34px); }
+.press{ border:3px solid var(--paper); background:var(--aub); margin-bottom:clamp(22px,3vw,34px); }
 .press-hd{
   display:flex; flex-wrap:wrap; justify-content:flex-end; align-items:baseline; gap:6px 16px;
   padding:13px 14px; border-bottom:3px solid var(--paper);
@@ -551,8 +571,10 @@ p{ margin:0 0 .85em; }
 
 .visit{
   display:grid; grid-template-columns:repeat(4,1fr); gap:0;
-  border-top:3px solid var(--paper);
+  border-top:3px solid var(--paper); background:var(--aub);
 }
+/* a line of small type sitting straight on a screened field */
+.knock{ display:inline-block; background:var(--aub); padding:6px 9px; }
 .visit div{ padding:clamp(16px,2vw,24px) clamp(12px,1.6vw,20px) 0; }
 .visit div + div{ border-left:3px solid var(--paper); }
 @media (max-width:720px){ .visit{ grid-template-columns:repeat(2,1fr); } .visit div:nth-child(3){ border-left:0; } .visit div:nth-child(n+3){ border-top:3px solid var(--paper); } }
@@ -697,13 +719,15 @@ body.slip-live .wordrow span{ transition:none; transition-delay:0s; }
       <span class="w4" aria-hidden="true">GLOU</span>
     </h1>
 
-    <div class="inner">
-      <div class="mast-foot">
-        <span>NATURAL WINE</span>
-        <span><em>LOW INTERVENTION, HIGH TURNOVER</em></span>
-        <span>2114 SPRUCE ST</span>
-        <span>PHILADELPHIA PA 19103</span>
-        <span><em>TUE–SUN</em></span>
+    <div class="mast-strip">
+      <div class="inner">
+        <div class="mast-foot">
+          <span>NATURAL WINE</span>
+          <span><em>LOW INTERVENTION, HIGH TURNOVER</em></span>
+          <span>2114 SPRUCE ST</span>
+          <span>PHILADELPHIA PA 19103</span>
+          <span><em>TUE–SUN</em></span>
+        </div>
       </div>
     </div>
   </section>
@@ -875,7 +899,7 @@ body.slip-live .wordrow span{ transition:none; transition-delay:0s; }
         </div>
 
         <div class="rack g-acid" style="--hov:var(--aub);--hovc:var(--paper)">
-          <div class="scr" style="--ink:var(--pink);--a:15deg;--g:6px;--r:1.5px"></div>
+          <div class="scr" style="--ink:var(--pink);--a:15deg;--g:6px;--r:1.1px"></div>
           <div class="rack-in">
             <div class="rack-hd"><h3>Skins</h3><span class="no" style="color:var(--aub)"><em style="color:var(--acid)">RACK 02</em></span></div>
             <div class="shelf-item">
@@ -898,7 +922,7 @@ body.slip-live .wordrow span{ transition:none; transition-delay:0s; }
         </div>
 
         <div class="rack g-blue" style="--hov:var(--acid);--hovc:var(--aub)">
-          <div class="scr" style="--ink:var(--aub);--a:45deg;--g:6px;--r:1.5px"></div>
+          <div class="scr" style="--ink:var(--aub);--a:45deg;--g:6px;--r:1.1px"></div>
           <div class="rack-in">
             <div class="rack-hd"><h3>Chilled reds</h3><span class="no" style="color:var(--paper)"><em style="color:var(--blue)">RACK 03</em></span></div>
             <div class="shelf-item">
@@ -921,7 +945,7 @@ body.slip-live .wordrow span{ transition:none; transition-delay:0s; }
         </div>
 
         <div class="rack g-aub" style="--hov:var(--acid);--hovc:var(--aub)">
-          <div class="scr" style="--ink:var(--pink);--a:0deg;--g:6px;--r:1.6px;mix-blend-mode:screen;opacity:.4"></div>
+          <div class="scr" style="--ink:var(--pink);--a:0deg;--g:6px;--r:1.1px;mix-blend-mode:screen;opacity:.45"></div>
           <div class="rack-in">
             <div class="rack-hd"><h3>Whites with teeth</h3><span class="no" style="color:var(--acid)"><em style="color:var(--aub)">RACK 04</em></span></div>
             <div class="shelf-item">
@@ -998,7 +1022,7 @@ body.slip-live .wordrow span{ transition:none; transition-delay:0s; }
     <div class="scr scr--mottle" style="--ink:var(--blue);--a:45deg;mix-blend-mode:screen;opacity:.2"></div>
 
     <div class="inner">
-      <p class="kicker" style="color:var(--pink)">PRINTED IN FOUR INKS, ONE PASS, ON KRAFT</p>
+      <p class="kicker knock" style="color:var(--pink)">PRINTED IN FOUR INKS, ONE PASS, ON KRAFT</p>
       <h2 style="color:var(--acid)">The recipe.</h2>
 
       <div class="inks">
