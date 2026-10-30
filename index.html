@@ -65,7 +65,7 @@ a{ color:inherit; cursor:pointer; }
    cross, ink sits on the stock. This is the press. Nothing here is
    a filter over the top.                                           */
 .scr{
-  position:absolute; inset:0;
+  position:absolute; inset:-24px;   /* bleed, so a slipped plate leaves no gap */
   pointer-events:none;
   mix-blend-mode:multiply;
   --ink:var(--aub); --g:5px; --r:1.15px; --a:15deg;
@@ -79,6 +79,26 @@ a{ color:inherit; cursor:pointer; }
 }
 /* coarse mottle — ink sitting unevenly on the stock, inside the field */
 .scr--mottle{ --g:15px; --r:3.2px; opacity:.24; }
+
+/* ── THE PRESS ───────────────────────────────────────────────────
+   Each screen belongs to a plate. A plate can be pulled off the
+   press, and the register can be slipped — every plate drifts its
+   own way, which is how a job goes out of register in the first
+   place. --slip is set from the control in the colophon.          */
+:root{ --slip:0px; }
+.scr[data-ink="1"]{ transform:translate(calc(var(--slip) * -1.15), calc(var(--slip) * .55)); }
+.scr[data-ink="2"]{ transform:translate(calc(var(--slip) * .85),  calc(var(--slip) * -.6)); }
+.scr[data-ink="3"]{ transform:translate(calc(var(--slip) * -.5),  calc(var(--slip) * -.95)); }
+.scr[data-ink="4"]{ transform:translate(calc(var(--slip) * .7),   calc(var(--slip) * .8)); }
+body.off-1 .scr[data-ink="1"],
+body.off-2 .scr[data-ink="2"],
+body.off-3 .scr[data-ink="3"],
+body.off-4 .scr[data-ink="4"]{ display:none; }
+/* the recipe in the frame stays truthful about what is on the press */
+body.off-1 .chip-1 b,body.off-2 .chip-2 b,
+body.off-3 .chip-3 b,body.off-4 .chip-4 b{ opacity:.2; }
+body.off-1 .chip-1 span,body.off-2 .chip-2 span,
+body.off-3 .chip-3 span,body.off-4 .chip-4 span{ opacity:.45; text-decoration:line-through; }
 
 /* ── THE FRAME. It works. It is not the space left over. ───────── */
 .frame{ position:fixed; inset:0; z-index:60; pointer-events:none; }
@@ -97,7 +117,7 @@ a{ color:inherit; cursor:pointer; }
   display:flex; align-items:center; gap:1.5em;
   padding-left:calc(var(--fl) + 10px);   /* clear of the recipe column */
   font-family:var(--mono); font-weight:600;
-  font-size:9px; letter-spacing:.24em;
+  font-size:10.5px; letter-spacing:.14em;
   color:var(--acid);
   white-space:nowrap;
 }
@@ -116,7 +136,7 @@ a{ color:inherit; cursor:pointer; }
   position:absolute; right:calc(var(--fr) + 7px); top:50%;
   transform:translateY(-50%);
   font-family:var(--mono); font-weight:800;
-  font-size:8.5px; letter-spacing:.18em; color:var(--paper);
+  font-size:10px; letter-spacing:.12em; color:var(--paper);
   background:var(--aub); padding-left:11px;
 }
 
@@ -135,7 +155,7 @@ a{ color:inherit; cursor:pointer; }
 .chip span{
   writing-mode:vertical-rl; transform:rotate(180deg);
   font-family:var(--mono); font-weight:600;
-  font-size:8px; letter-spacing:.16em; color:var(--paper);
+  font-size:9.5px; letter-spacing:.1em; color:var(--paper);
   white-space:nowrap; line-height:1;
 }
 @media (max-width:860px){
@@ -195,7 +215,10 @@ a{ color:inherit; cursor:pointer; }
 }
 
 /* ── TYPE ────────────────────────────────────────────────────── */
-.kicker{ font-family:var(--mono); font-weight:800; font-size:10px; letter-spacing:.28em; margin:0; }
+/* Martian Mono is a wide face with small apertures. Below ~10.5px,
+   and above ~.14em of tracking at that size, it stops being readable
+   and becomes pattern. Everything small is set against that limit. */
+.kicker{ font-family:var(--mono); font-weight:800; font-size:11px; letter-spacing:.2em; margin:0; }
 h2{
   font-family:var(--display); font-weight:900;
   font-size:clamp(2.1rem,5vw,3.7rem);
@@ -229,8 +252,8 @@ p{ margin:0 0 .85em; }
   border-bottom:3px solid var(--pink);
 }
 .nav a{
-  font-family:var(--mono); font-weight:800; font-size:10px; letter-spacing:.22em;
-  color:var(--acid); text-decoration:none; padding:11px 14px;
+  font-family:var(--mono); font-weight:800; font-size:11px; letter-spacing:.13em;
+  color:var(--acid); text-decoration:none; padding:12px 15px;
   border-left:1px solid rgba(233,220,192,.28);
   transition:background .12s steps(2), color .12s steps(2);
 }
@@ -252,11 +275,15 @@ p{ margin:0 0 .85em; }
 .w3{ color:var(--aub); }  .w4{ color:var(--pink); }
 
 .mast-foot{
-  display:flex; flex-wrap:wrap; justify-content:flex-end; gap:5px 1.4em;
-  padding:14px 0 clamp(22px,3.2vw,38px);
-  font-family:var(--mono); font-weight:600; font-size:10px; letter-spacing:.19em;
+  display:flex; flex-wrap:wrap; justify-content:flex-end; align-items:center; gap:7px 1.2em;
+  padding:16px 0 clamp(22px,3.2vw,38px);
+  font-family:var(--mono); font-weight:600; font-size:11px; letter-spacing:.13em;
 }
-.mast-foot em{ font-style:normal; color:var(--blue); }
+/* blue on acid is 4.0:1 — under AA. Knocked out of aubergine instead. */
+.mast-foot em{
+  font-style:normal; background:var(--aub); color:var(--acid); padding:4px 7px;
+  -webkit-box-decoration-break:clone; box-decoration-break:clone;  /* each wrapped fragment keeps its box */
+}
 
 /* ── BAND HEADINGS ───────────────────────────────────────────── */
 .hd{ padding:clamp(24px,3.2vw,40px) 0 clamp(14px,1.8vw,22px); }
@@ -270,7 +297,7 @@ p{ margin:0 0 .85em; }
 .four .cap{
   display:flex; justify-content:space-between; align-items:baseline;
   margin-top:13px; padding-top:7px; border-top:2px solid currentColor;
-  font-family:var(--mono); font-weight:800; font-size:9.5px; letter-spacing:.16em;
+  font-family:var(--mono); font-weight:800; font-size:11px; letter-spacing:.1em;
 }
 @media (max-width:720px){
   .four{ grid-template-columns:repeat(2,1fr); }
@@ -288,8 +315,8 @@ p{ margin:0 0 .85em; }
 .pair--head .slab{ margin-top:clamp(24px,3.2vw,40px); }
 .nots{ list-style:none; margin:0; padding:0; }
 .nots li{
-  font-family:var(--mono); font-weight:800; font-size:10px; letter-spacing:.17em;
-  padding:9px 0 8px; border-bottom:2px solid currentColor;
+  font-family:var(--mono); font-weight:800; font-size:11px; letter-spacing:.12em;
+  padding:10px 0 9px; border-bottom:2px solid currentColor;
 }
 .nots li:first-child{ border-top:2px solid currentColor; }
 
@@ -304,8 +331,8 @@ p{ margin:0 0 .85em; }
 .faces svg{ display:block; width:100%; height:auto; margin-bottom:-5px; }
 .faces .nm{
   position:absolute; left:0; right:0; top:0;
-  font-family:var(--mono); font-weight:800; font-size:9px;
-  letter-spacing:.2em; padding:6px 9px; text-align:right;
+  font-family:var(--mono); font-weight:800; font-size:10.5px;
+  letter-spacing:.12em; padding:7px 9px; text-align:right;
 }
 @media (max-width:720px){
   .faces{ grid-template-columns:repeat(2,1fr); }
@@ -320,8 +347,8 @@ p{ margin:0 0 .85em; }
 }
 .idx{ list-style:none; margin:0; padding:0; }
 .idx li{
-  font-family:var(--mono); font-weight:600; font-size:9.5px; letter-spacing:.17em;
-  padding:5px 0; border-bottom:1px solid rgba(233,220,192,.35);
+  font-family:var(--mono); font-weight:600; font-size:11px; letter-spacing:.11em;
+  padding:6px 0; border-bottom:1px solid rgba(233,220,192,.45);
 }
 @media (max-width:720px){ .racks-hd{ grid-template-columns:1fr; } .idx{ display:none; } }
 
@@ -340,16 +367,50 @@ p{ margin:0 0 .85em; }
   padding-bottom:8px; border-bottom:3px solid currentColor;
 }
 .rack-hd .no{
-  font-family:var(--mono); font-weight:800; font-size:9.5px; letter-spacing:.18em;
-  padding:4px 7px; background:currentColor;
+  font-family:var(--mono); font-weight:800; font-size:10.5px; letter-spacing:.11em;
+  padding:5px 8px; background:currentColor;
 }
 .rack-hd .no em{ font-style:normal; }
-.row{ padding:11px 0 9px; border-bottom:2px solid currentColor; transition:background .1s steps(2), color .1s steps(2); }
-.rack .row:last-child{ border-bottom:0; }
+.shelf-item{ border-bottom:2px solid currentColor; }
+.rack .shelf-item:last-child{ border-bottom:0; }
+.row{
+  display:block; width:100%;
+  padding:12px 0 10px; border:0; background:none; color:inherit;
+  font:inherit; text-align:right; cursor:pointer;
+  transition:background .1s steps(2), color .1s steps(2);
+}
 .row .l1{ display:flex; justify-content:flex-end; align-items:baseline; gap:16px; }
+/* the open/shut mark. two bars, one of which goes away. */
+.row .mk{
+  position:relative; flex:none; width:15px; height:15px;
+  border:2px solid currentColor; align-self:center; margin-right:auto;
+}
+.row .mk::before,.row .mk::after{
+  content:""; position:absolute; background:currentColor;
+  left:50%; top:50%; transform:translate(-50%,-50%);
+}
+.row .mk::before{ width:7px; height:2px; }
+.row .mk::after{ width:2px; height:7px; transition:opacity .12s steps(2); }
+.row[aria-expanded="true"] .mk::after{ opacity:0; }
+
+/* the note is knocked out of the field — nothing screened behind
+   the one piece of text a person actually leans in to read. */
+.note-panel{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .24s steps(5); }
+.row[aria-expanded="true"] + .note-panel{ grid-template-rows:1fr; }
+.note-panel > div{ overflow:hidden; visibility:hidden; }
+.row[aria-expanded="true"] + .note-panel > div{ visibility:visible; }
+.note-panel .in{
+  background:var(--hov); color:var(--hovc);
+  padding:13px 14px 14px; margin:0 0 11px;
+}
+.note-panel .tag{
+  display:block; font-family:var(--mono); font-weight:800;
+  font-size:10px; letter-spacing:.14em; padding-bottom:6px;
+}
+.note-panel p{ margin:0; font-size:16px; line-height:1.48; }
 .row .nme{ font-family:var(--display); font-weight:800; font-size:clamp(1.12rem,1.6vw,1.42rem); text-transform:uppercase; letter-spacing:.015em; line-height:1; }
-.row .pr{ font-family:var(--mono); font-weight:800; font-size:12px; letter-spacing:.02em; flex:none; }
-.row .l2{ margin:4px 0 0; font-family:var(--mono); font-weight:400; font-size:9.5px; letter-spacing:.13em; }
+.row .pr{ font-family:var(--mono); font-weight:800; font-size:13px; letter-spacing:.02em; flex:none; }
+.row .l2{ display:block; margin:5px 0 0; font-family:var(--mono); font-weight:600; font-size:11px; letter-spacing:.09em; }
 .row:hover{ background:var(--hov); color:var(--hovc); }
 
 /* ── THURSDAY ────────────────────────────────────────────────── */
@@ -379,17 +440,17 @@ p{ margin:0 0 .85em; }
 .signup{ display:flex; gap:0; border:3px solid var(--acid); }
 .signup input{
   flex:1 1 auto; min-width:0; background:var(--aub); color:var(--paper); border:0;
-  padding:13px 12px; font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-align:right;
+  padding:14px 12px; font-family:var(--mono); font-weight:600; font-size:12px; letter-spacing:.08em; text-align:right;
 }
-.signup input::placeholder{ color:rgba(233,220,192,.5); }
+.signup input::placeholder{ color:rgba(233,220,192,.62); }
 .signup button{
   flex:none; border:0; border-left:3px solid var(--acid);
   background:var(--acid); color:var(--aub);
-  font-family:var(--mono); font-weight:800; font-size:10px; letter-spacing:.2em;
-  padding:13px 15px; cursor:pointer; transition:background .12s steps(2);
+  font-family:var(--mono); font-weight:800; font-size:11px; letter-spacing:.12em;
+  padding:14px 16px; cursor:pointer; transition:background .12s steps(2);
 }
 .signup button:hover{ background:var(--pink); }
-.note{ font-family:var(--mono); font-size:9px; letter-spacing:.17em; padding-top:9px; margin:0; }
+.note{ font-family:var(--mono); font-weight:600; font-size:10.5px; letter-spacing:.1em; padding-top:10px; margin:0; line-height:1.5; }
 
 /* ── COLOPHON ────────────────────────────────────────────────── */
 .colophon{ padding:clamp(24px,3.2vw,40px) 0 clamp(30px,4.2vw,54px); }
@@ -401,9 +462,69 @@ p{ margin:0 0 .85em; }
 .inks div{ padding:0 0 11px; }
 .inks div + div{ border-left:3px solid var(--paper); }
 .inks b{ display:block; height:clamp(54px,7vw,84px); position:relative; overflow:hidden; }
-.inks .lbl{ display:block; padding:9px 10px 0; font-family:var(--mono); font-weight:800; font-size:9px; letter-spacing:.15em; }
-.inks .hex{ display:block; padding:4px 10px 0; font-family:var(--mono); font-weight:400; font-size:9px; letter-spacing:.09em; color:var(--acid); }
+.inks .lbl{ display:block; padding:10px 10px 0; font-family:var(--mono); font-weight:800; font-size:10.5px; letter-spacing:.1em; }
+.inks .hex{ display:block; padding:5px 10px 0; font-family:var(--mono); font-weight:600; font-size:10.5px; letter-spacing:.06em; color:var(--acid); }
 @media (max-width:720px){ .inks{ grid-template-columns:repeat(2,1fr); } .inks div:nth-child(3){ border-left:0; } .inks div:nth-child(n+3){ border-top:3px solid var(--paper); } }
+
+/* ── THE PRESS PANEL ─────────────────────────────────────────── */
+.press{ border:3px solid var(--paper); margin-bottom:clamp(22px,3vw,34px); }
+.press-hd{
+  display:flex; flex-wrap:wrap; justify-content:flex-end; align-items:baseline; gap:6px 16px;
+  padding:13px 14px; border-bottom:3px solid var(--paper);
+}
+.press-hd h3{ color:var(--acid); }
+.press-body{ display:grid; grid-template-columns:1fr minmax(0,20rem); gap:0; }
+@media (max-width:720px){ .press-body{ grid-template-columns:1fr; } }
+.plates{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; }
+@media (max-width:720px){
+  .plates{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .plates .plate-btn:nth-child(3){ border-left:0; }
+  .plates .plate-btn:nth-child(n+3){ border-top:3px solid var(--paper); }
+}
+.plate-btn{
+  display:flex; flex-direction:column; align-items:flex-end; gap:8px;
+  padding:13px 12px 14px; border:0; border-left:3px solid var(--paper);
+  background:none; color:var(--paper); cursor:pointer;
+  font-family:var(--mono); font-weight:800; font-size:10.5px; letter-spacing:.09em;
+  transition:background .1s steps(2), color .1s steps(2);
+}
+.plates .plate-btn:first-child{ border-left:0; }
+.plate-btn b{ display:block; width:100%; height:26px; }
+.plate-btn i{ font-style:normal; font-weight:600; font-size:9.5px; letter-spacing:.06em; opacity:.75; }
+.plate-btn:hover{ background:var(--paper); color:var(--aub); }
+.plate-btn[aria-pressed="false"]{ color:rgba(233,220,192,.5); }
+.plate-btn[aria-pressed="false"] b{ opacity:.16; }
+.plate-btn[aria-pressed="false"]:hover{ color:var(--aub); }
+
+.regctl{ padding:13px 14px 15px; border-left:3px solid var(--paper); }
+@media (max-width:720px){ .regctl{ border-left:0; border-top:3px solid var(--paper); } }
+.regctl .lbl{
+  display:flex; justify-content:space-between; align-items:baseline; gap:10px;
+  font-family:var(--mono); font-weight:800; font-size:10.5px; letter-spacing:.09em; color:var(--paper);
+}
+.regctl output{ color:var(--acid); font-variant-numeric:tabular-nums; }
+.regctl input[type=range]{
+  -webkit-appearance:none; appearance:none;
+  display:block; width:100%; height:28px;   /* a thumb-sized hit target */
+  margin:14px 0 2px; background:none; cursor:ew-resize;
+}
+.regctl input[type=range]::-webkit-slider-runnable-track{
+  height:12px; border:2px solid var(--paper);
+  background:linear-gradient(to right, var(--acid) 0 var(--fill,0%), var(--aub) var(--fill,0%) 100%);
+}
+.regctl input[type=range]::-moz-range-track{
+  height:12px; border:2px solid var(--paper);
+  background:linear-gradient(to right, var(--acid) 0 var(--fill,0%), var(--aub) var(--fill,0%) 100%);
+}
+.regctl input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none; appearance:none;
+  width:16px; height:26px; margin-top:-9px;
+  background:var(--paper); border:3px solid var(--aub);
+}
+.regctl input[type=range]::-moz-range-thumb{
+  width:16px; height:26px; border-radius:0;
+  background:var(--paper); border:3px solid var(--aub);
+}
 
 .visit{
   display:grid; grid-template-columns:repeat(4,1fr); gap:0;
@@ -413,7 +534,7 @@ p{ margin:0 0 .85em; }
 .visit div + div{ border-left:3px solid var(--paper); }
 @media (max-width:720px){ .visit{ grid-template-columns:repeat(2,1fr); } .visit div:nth-child(3){ border-left:0; } .visit div:nth-child(n+3){ border-top:3px solid var(--paper); } }
 .visit h3{ color:var(--acid); margin-bottom:9px; }
-.visit p{ font-size:15px; margin:0; }
+.visit p{ font-size:16px; line-height:1.5; margin:0; }
 .visit a{ text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:3px; text-decoration-color:var(--pink); }
 .visit a:hover{ color:var(--pink); }
 
@@ -421,12 +542,23 @@ p{ margin:0 0 .85em; }
 .endmark i{ display:block; width:clamp(26px,3.4vw,42px); height:clamp(26px,3.4vw,42px); }
 
 /* ── REGISTRATION ────────────────────────────────────────────── */
-.wordrow span{ transform:translate(var(--sx,0),var(--sy,0)); transition:transform .5s cubic-bezier(.2,.9,.2,1); }
+/* two offsets ride on each word: the one-off seat on load, and the
+   live slip from the registration control. They add. */
+.wordrow span{
+  transform:translate(calc(var(--sx,0px) + var(--wx,0px)), calc(var(--sy,0px) + var(--wy,0px)));
+  transition:transform .5s cubic-bezier(.2,.9,.2,1);
+}
+.w1{ --wx:calc(var(--slip) * -1.15); --wy:calc(var(--slip) * .55);  }
+.w2{ --wx:calc(var(--slip) * .85);   --wy:calc(var(--slip) * -.6);  }
+.w3{ --wx:calc(var(--slip) * -.5);   --wy:calc(var(--slip) * -.95); }
+.w4{ --wx:calc(var(--slip) * .7);    --wy:calc(var(--slip) * .8);   }
 body.loading .w1{ --sx:-13px; --sy:7px; }
 body.loading .w2{ --sx:9px;  --sy:-6px; }
 body.loading .w3{ --sx:-5px; --sy:-9px; }
 body.loading .w4{ --sx:12px; --sy:5px; }
 .w2{ transition-delay:.07s; } .w3{ transition-delay:.14s; } .w4{ transition-delay:.21s; }
+/* no easing while the slider is under the thumb */
+body.slip-live .wordrow span{ transition:none; transition-delay:0s; }
 
 .plate .scr{ transition:opacity .5s linear; }
 .plate .band:not(.registered) .scr{ opacity:.3; }
@@ -446,16 +578,17 @@ body.loading .w4{ --sx:12px; --sy:5px; }
   /* justified setting needs a measure. Below one, set it ragged
      left — still never flush left, still never centred. */
   .justify{ text-align:right; text-align-last:auto; hyphens:none; }
-  .nav a{ padding:10px 9px; font-size:9px; letter-spacing:.13em; white-space:nowrap; }
+  .nav a{ padding:11px 9px; font-size:10px; letter-spacing:.08em; white-space:nowrap; }
   .four svg{ max-height:24vh; }
   .wedge-cap{ display:none; }
   .wedge{ padding-left:calc(var(--fl) + 4px); }
-  .mast-foot{ font-size:9px; letter-spacing:.14em; }
-  .idx li,.nots li{ font-size:9px; letter-spacing:.12em; }
-  .row .l2{ font-size:8.5px; letter-spacing:.1em; }
+  .mast-foot{ font-size:10.5px; letter-spacing:.1em; }
+  .idx li,.nots li{ font-size:10.5px; letter-spacing:.09em; }
+  .row .l2{ font-size:10.5px; letter-spacing:.07em; }
+  .kicker{ font-size:10.5px; letter-spacing:.14em; }
 }
 @media (max-width:420px){
-  .nav a{ padding:10px 6px; font-size:8px; letter-spacing:.1em; }
+  .nav a{ padding:11px 7px; font-size:9.5px; letter-spacing:.04em; }
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -487,10 +620,10 @@ body.loading .w4{ --sx:12px; --sy:5px; }
   <div class="edge edge-left">
     <div class="scr" style="--ink:var(--pink);--a:15deg;--g:5px;--r:1.1px"></div>
     <div class="recipe">
-      <div class="chip"><b style="background:var(--pink)"></b><span>FLUORO PINK · 15°</span></div>
-      <div class="chip"><b style="background:var(--acid)"></b><span>ACID · 75°</span></div>
-      <div class="chip"><b style="background:var(--aub);outline:1px solid var(--paper);outline-offset:-1px"></b><span>AUBERGINE · 45°</span></div>
-      <div class="chip"><b style="background:var(--blue)"></b><span>MEDIUM BLUE · 00°</span></div>
+      <div class="chip chip-1"><b style="background:var(--pink)"></b><span>FLUORO PINK · 15°</span></div>
+      <div class="chip chip-2"><b style="background:var(--acid)"></b><span>ACID · 75°</span></div>
+      <div class="chip chip-3"><b style="background:var(--aub);outline:1px solid var(--paper);outline-offset:-1px"></b><span>AUBERGINE · 45°</span></div>
+      <div class="chip chip-4"><b style="background:var(--blue)"></b><span>MEDIUM BLUE · 00°</span></div>
       <div class="chip"><b style="background:var(--paper)"></b><span>STOCK · KRAFT</span></div>
     </div>
   </div>
@@ -692,13 +825,25 @@ body.loading .w4{ --sx:12px; --sy:5px; }
       <div class="racks-grid">
 
         <div class="rack g-pink" style="--hov:var(--aub);--hovc:var(--paper)">
-          <div class="scr" style="--ink:var(--acid);--a:75deg;--g:6px;--r:1.5px"></div>
+          <div class="scr" style="--ink:var(--acid);--a:75deg;--g:6px;--r:1.1px"></div>
           <div class="rack-in">
             <div class="rack-hd"><h3>Bubbles</h3><span class="no" style="color:var(--aub)"><em style="color:var(--pink)">RACK 01</em></span></div>
-            <div class="row"><div class="l1"><span class="nme">Charbonnel</span><span class="pr">$28</span></div><p class="l2">LOIRE · FR · CHENIN · PÉT-NAT</p></div>
-            <div class="row"><div class="l1"><span class="nme">Cascina Roveto</span><span class="pr">$32</span></div><p class="l2">PIEMONTE · IT · CORTESE · COL FONDO</p></div>
-            <div class="row"><div class="l1"><span class="nme">Weingut Halder</span><span class="pr">$36</span></div><p class="l2">PFALZ · DE · RIESLING · SEKT</p></div>
-            <div class="row"><div class="l1"><span class="nme">Finca Mimbres</span><span class="pr">$27</span></div><p class="l2">GREDOS · ES · ALBILLO · ANCESTRAL</p></div>
+            <div class="shelf-item">
+              <button class="row" type="button" aria-expanded="false" aria-controls="n11"><span class="l1"><span class="mk" aria-hidden="true"></span><span class="nme">Charbonnel</span><span class="pr">$28</span></span><span class="l2">LOIRE · FR · CHENIN · PÉT-NAT</span></button>
+              <div class="note-panel" id="n11"><div><div class="in"><span class="tag">WE SAY</span><p>Cloudy as cider and bone dry. Opens with a hiss and leaves sediment in the glass, which is the point. Cold, in a tumbler, before anyone has decided what to eat.</p></div></div></div>
+            </div>
+            <div class="shelf-item">
+              <button class="row" type="button" aria-expanded="false" aria-controls="n12"><span class="l1"><span class="mk" aria-hidden="true"></span><span class="nme">Cascina Roveto</span><span class="pr">$32</span></span><span class="l2">PIEMONTE · IT · CORTESE · COL FONDO</span></button>
+              <div class="note-panel" id="n12"><div><div class="in"><span class="tag">WE SAY</span><p>Bottled on its lees, so roll it once before you open it. Bruised pear and salt. Goes with anything that came out of a fryer.</p></div></div></div>
+            </div>
+            <div class="shelf-item">
+              <button class="row" type="button" aria-expanded="false" aria-controls="n13"><span class="l1"><span class="mk" aria-hidden="true"></span><span class="nme">Weingut Halder</span><span class="pr">$36</span></span><span class="l2">PFALZ · DE · RIESLING · SEKT</span></button>
+              <div class="note-panel" id="n13"><div><div class="in"><span class="tag">WE SAY</span><p>The serious one on this rack. Three years on lees and a hard line of acid down the middle. Buy it for someone who says they do not like natural wine.</p></div></div></div>
+            </div>
+            <div class="shelf-item">
+              <button class="row" type="button" aria-expanded="false" aria-controls="n14"><span class="l1"><span class="mk" aria-hidden="true"></span><span class="nme">Finca Mimbres</span><span class="pr">$27</span></span><span class="l2">GREDOS · ES · ALBILLO · ANCESTRAL</span></button>
+              <div class="note-panel" id="n14"><div><div class="in"><span class="tag">WE SAY</span><p>Made in a shed at eleven hundred metres. Pale, chalky, barely eleven percent. We drink this one behind the counter more than we sell it.</p></div></div></div>
+            </div>
           </div>
         </div>
 
@@ -706,10 +851,22 @@ body.loading .w4{ --sx:12px; --sy:5px; }
           <div class="scr" style="--ink:var(--pink);--a:15deg;--g:6px;--r:1.5px"></div>
           <div class="rack-in">
             <div class="rack-hd"><h3>Skins</h3><span class="no" style="color:var(--aub)"><em style="color:var(--acid)">RACK 02</em></span></div>
-            <div class="row"><div class="l1"><span class="nme">Casa Lerma</span><span class="pr">$31</span></div><p class="l2">SICILIA · IT · CATARRATTO · 8 DAYS</p></div>
-            <div class="row"><div class="l1"><span class="nme">Weinhof Andl</span><span class="pr">$38</span></div><p class="l2">STEIERMARK · AT · PINOT GRIS · 21 DAYS</p></div>
-            <div class="row"><div class="l1"><span class="nme">Petit-Bois</span><span class="pr">$42</span></div><p class="l2">JURA · FR · SAVAGNIN · 14 DAYS</p></div>
-            <div class="row"><div class="l1"><span class="nme">Kakheti Co-op</span><span class="pr">$34</span></div><p class="l2">KAKHETI · GE · RKATSITELI · 6 MONTHS</p></div>
+            <div class="shelf-item">
+              <button class="row" type="button" aria-expanded="false" aria-controls="n21"><span class="l1"><span class="mk" aria-hidden="true"></span><span class="nme">Casa Lerma</span><span class="pr">$31</span></span><span class="l2">SICILIA · IT · CATARRATTO · 8 DAYS</span></button>
+              <div class="note-panel" id="n21"><div><div class="in"><span class="tag">WE SAY</span><p>Eight days on skins, so it is orange in colour and still behaves like a white wine. Apricot skin, a little grip at the end.</p></div></div></div>
+            </div>
+            <div class="shelf-item">
+              <button class="row" type="button" aria-expanded="false" aria-controls="n22"><span class="l1"><span class="mk" aria-hidden="true"></span><span class="nme">Weinhof Andl</span><span class="pr">$38</span></span><span class="l2">STEIERMARK · AT · PINOT GRIS · 21 DAYS</span></button>
+              <div class="note-panel" id="n22"><div><div class="in"><span class="tag">WE SAY</span><p>Twenty-one days, properly chewy. Marmalade and wet hay. It will fight anything you put beside it except a hard cheese.</p></div></div></div>
+            </div>
+            <div class="shelf-item">
+              <button class="row" type="button" aria-expanded="false" aria-controls="n23"><span class="l1"><span class="mk" aria-hidden="true"></span><span class="nme">Petit-Bois</span><span class="pr">$42</span></span><span class="l2">JURA · FR · SAVAGNIN · 14 DAYS</span></button>
+              <div class="note-panel" id="n23"><div><div class="in"><span class="tag">WE SAY</span><p>Fourteen days and a whisper of oxidation. Walnut and green apple. If you have never had a skin-contact savagnin, start on this one.</p></div></div></div>
+            </div>
+            <div class="shelf-item">
+              <button class="row" type="button" aria-expanded="false" aria-controls="n24"><span class="l1"><span class="mk" aria-hidden="true"></span><span class="nme">Kakheti Co-op</span><span class="pr">$34</span></span><span class="l2">KAKHETI · GE · RKATSITELI · 6 MONTHS</span></button>
+              <div class="note-panel" id="n24"><div><div class="in"><span class="tag">WE SAY</span><p>Six months in a buried qvevri, the old way. Tannic, dry, faintly bitter. Give it an hour in a jug and it turns into something else.</p></div></div></div>
+            </div>
           </div>
         </div>
 
@@ -717,10 +874,22 @@ body.loading .w4{ --sx:12px; --sy:5px; }
           <div class="scr" style="--ink:var(--aub);--a:45deg;--g:6px;--r:1.5px"></div>
           <div class="rack-in">
             <div class="rack-hd"><h3>Chilled reds</h3><span class="no" style="color:var(--paper)"><em style="color:var(--blue)">RACK 03</em></span></div>
-            <div class="row"><div class="l1"><span class="nme">Clos de la Raie</span><span class="pr">$29</span></div><p class="l2">LOIRE · FR · GAMAY · WHOLE BUNCH</p></div>
-            <div class="row"><div class="l1"><span class="nme">Podere Sassano</span><span class="pr">$33</span></div><p class="l2">TOSCANA · IT · CILIEGIOLO</p></div>
-            <div class="row"><div class="l1"><span class="nme">Finca Mimbres</span><span class="pr">$26</span></div><p class="l2">GREDOS · ES · GARNACHA · OLD VINE</p></div>
-            <div class="row"><div class="l1"><span class="nme">Weingut Braun</span><span class="pr">$37</span></div><p class="l2">PFALZ · DE · SPÄTBURGUNDER</p></div>
+            <div class="shelf-item">
+              <button class="row" type="button" aria-expanded="false" aria-controls="n31"><span class="l1"><span class="mk" aria-hidden="true"></span><span class="nme">Clos de la Raie</span><span class="pr">$29</span></span><span class="l2">LOIRE · FR · GAMAY · WHOLE BUNCH</span></button>
+              <div class="note-panel" id="n31"><div><div class="in"><span class="tag">WE SAY</span><p>Whole bunch gamay with no sulphur at all. Raspberry and black pepper. Twenty minutes in the fridge and it is the best thing on this list.</p></div></div></div>
+            </div>
+            <div class="shelf-item">
+              <button class="row" type="button" aria-expanded="false" aria-controls="n32"><span class="l1"><span class="mk" aria-hidden="true"></span><span class="nme">Podere Sassano</span><span class="pr">$33</span></span><span class="l2">TOSCANA · IT · CILIEGIOLO</span></button>
+              <div class="note-panel" id="n32"><div><div class="in"><span class="tag">WE SAY</span><p>A grape nobody asks for by name and everybody likes. Sour cherry, thin in the good way, gone by the end of the evening.</p></div></div></div>
+            </div>
+            <div class="shelf-item">
+              <button class="row" type="button" aria-expanded="false" aria-controls="n33"><span class="l1"><span class="mk" aria-hidden="true"></span><span class="nme">Finca Mimbres</span><span class="pr">$26</span></span><span class="l2">GREDOS · ES · GARNACHA · OLD VINE</span></button>
+              <div class="note-panel" id="n33"><div><div class="in"><span class="tag">WE SAY</span><p>Eighty-year-old vines on granite. Light in colour and not light at all in flavour. The cheapest serious bottle in the shop.</p></div></div></div>
+            </div>
+            <div class="shelf-item">
+              <button class="row" type="button" aria-expanded="false" aria-controls="n34"><span class="l1"><span class="mk" aria-hidden="true"></span><span class="nme">Weingut Braun</span><span class="pr">$37</span></span><span class="l2">PFALZ · DE · SPÄTBURGUNDER</span></button>
+              <div class="note-panel" id="n34"><div><div class="in"><span class="tag">WE SAY</span><p>German pinot, farmed by a man who answers his own phone. Beetroot, blood orange, and a cold stone at the finish.</p></div></div></div>
+            </div>
           </div>
         </div>
 
@@ -728,10 +897,22 @@ body.loading .w4{ --sx:12px; --sy:5px; }
           <div class="scr" style="--ink:var(--pink);--a:0deg;--g:6px;--r:1.6px;mix-blend-mode:screen;opacity:.4"></div>
           <div class="rack-in">
             <div class="rack-hd"><h3>Whites with teeth</h3><span class="no" style="color:var(--acid)"><em style="color:var(--aub)">RACK 04</em></span></div>
-            <div class="row"><div class="l1"><span class="nme">La Combe Noire</span><span class="pr">$44</span></div><p class="l2">JURA · FR · CHARDONNAY · OUILLÉ</p></div>
-            <div class="row"><div class="l1"><span class="nme">Quinta do Corvo</span><span class="pr">$24</span></div><p class="l2">VINHO VERDE · PT · LOUREIRO</p></div>
-            <div class="row"><div class="l1"><span class="nme">Weingut Halder</span><span class="pr">$30</span></div><p class="l2">PFALZ · DE · RIESLING · TROCKEN</p></div>
-            <div class="row"><div class="l1"><span class="nme">Tenuta Frassina</span><span class="pr">$35</span></div><p class="l2">CAMPANIA · IT · FIANO</p></div>
+            <div class="shelf-item">
+              <button class="row" type="button" aria-expanded="false" aria-controls="n41"><span class="l1"><span class="mk" aria-hidden="true"></span><span class="nme">La Combe Noire</span><span class="pr">$44</span></span><span class="l2">JURA · FR · CHARDONNAY · OUILLÉ</span></button>
+              <div class="note-panel" id="n41"><div><div class="in"><span class="tag">WE SAY</span><p>Topped up through the whole élevage, so no flor and no sherry character. Reads like a very good white burgundy that got away. We open it when somebody is celebrating.</p></div></div></div>
+            </div>
+            <div class="shelf-item">
+              <button class="row" type="button" aria-expanded="false" aria-controls="n42"><span class="l1"><span class="mk" aria-hidden="true"></span><span class="nme">Quinta do Corvo</span><span class="pr">$24</span></span><span class="l2">VINHO VERDE · PT · LOUREIRO</span></button>
+              <div class="note-panel" id="n42"><div><div class="in"><span class="tag">WE SAY</span><p>Granite soils, faintly spritzy, and about nine dollars less than it ought to be. Buy two.</p></div></div></div>
+            </div>
+            <div class="shelf-item">
+              <button class="row" type="button" aria-expanded="false" aria-controls="n43"><span class="l1"><span class="mk" aria-hidden="true"></span><span class="nme">Weingut Halder</span><span class="pr">$30</span></span><span class="l2">PFALZ · DE · RIESLING · TROCKEN</span></button>
+              <div class="note-panel" id="n43"><div><div class="in"><span class="tag">WE SAY</span><p>Lime pith and diesel, acid like a slammed door. Dry all the way through. It will outlive everyone reading this.</p></div></div></div>
+            </div>
+            <div class="shelf-item">
+              <button class="row" type="button" aria-expanded="false" aria-controls="n44"><span class="l1"><span class="mk" aria-hidden="true"></span><span class="nme">Tenuta Frassina</span><span class="pr">$35</span></span><span class="l2">CAMPANIA · IT · FIANO</span></button>
+              <div class="note-panel" id="n44"><div><div class="in"><span class="tag">WE SAY</span><p>Grown on volcanic ash. Smoky, waxy, almost savoury. Needs food — anything with olive oil on it.</p></div></div></div>
+            </div>
           </div>
         </div>
 
@@ -816,6 +997,26 @@ body.loading .w4{ --sx:12px; --sy:5px; }
         </div>
       </div>
 
+      <div class="press">
+        <div class="press-hd">
+          <p class="kicker" style="color:var(--pink)">PULL A PLATE · SLIP THE REGISTER</p>
+          <h3>The press</h3>
+        </div>
+        <div class="press-body">
+          <div class="plates">
+            <button class="plate-btn" type="button" data-plate="1" aria-pressed="true"><b style="background:var(--pink)"></b>INK 1<i>FLUORO PINK</i></button>
+            <button class="plate-btn" type="button" data-plate="2" aria-pressed="true"><b style="background:var(--acid)"></b>INK 2<i>ACID</i></button>
+            <button class="plate-btn" type="button" data-plate="3" aria-pressed="true"><b style="background:var(--aub);outline:2px solid var(--paper);outline-offset:-2px"></b>INK 3<i>AUBERGINE</i></button>
+            <button class="plate-btn" type="button" data-plate="4" aria-pressed="true"><b style="background:var(--blue)"></b>INK 4<i>MEDIUM BLUE</i></button>
+          </div>
+          <div class="regctl">
+            <label class="lbl" for="reg"><span>REGISTRATION</span><output id="regout" for="reg">IN REGISTER</output></label>
+            <input type="range" id="reg" min="0" max="100" step="1" value="0" aria-describedby="reghint">
+            <p class="note" id="reghint" style="color:var(--paper);opacity:.75">EACH PLATE DRIFTS ITS OWN WAY, AS ON A BAD DAY.</p>
+          </div>
+        </div>
+      </div>
+
       <div class="visit">
         <div>
           <h3>Where</h3>
@@ -868,6 +1069,45 @@ if ('IntersectionObserver' in window) {
 /* marquee: double the run so the loop has somewhere to go */
 var run = document.querySelector('.marquee div');
 if (run) { run.innerHTML = run.innerHTML + run.innerHTML; }
+
+/* ── the shelf opens ──────────────────────────────────────────── */
+document.querySelectorAll('.row').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    btn.setAttribute('aria-expanded', btn.getAttribute('aria-expanded') === 'true' ? 'false' : 'true');
+  });
+});
+
+/* ── the press ────────────────────────────────────────────────────
+   Every screen declares the ink it prints in, once, as --ink in its
+   own style attribute. Read that back rather than repeat it as a
+   second attribute the two could disagree about.                   */
+var PLATE = { pink:'1', acid:'2', aub:'3', blue:'4' };
+document.querySelectorAll('.scr').forEach(function(s){
+  var m = /--ink:\s*var\(\s*--([a-z]+)\s*\)/.exec(s.getAttribute('style') || '');
+  s.setAttribute('data-ink', (m && PLATE[m[1]]) || '3');
+});
+
+document.querySelectorAll('.plate-btn').forEach(function(b){
+  b.addEventListener('click', function(){
+    var on = b.getAttribute('aria-pressed') === 'true';
+    b.setAttribute('aria-pressed', on ? 'false' : 'true');
+    document.body.classList.toggle('off-' + b.getAttribute('data-plate'), on);
+  });
+});
+
+var reg = document.getElementById('reg');
+var regout = document.getElementById('regout');
+function setSlip(){
+  var pt = (reg.value / 100) * 14;
+  document.documentElement.style.setProperty('--slip', pt.toFixed(1) + 'px');
+  reg.style.setProperty('--fill', reg.value + '%');
+  regout.textContent = pt < 0.05 ? 'IN REGISTER' : 'OUT BY ' + pt.toFixed(1) + ' PT';
+}
+if (reg) {
+  reg.addEventListener('input', function(){ document.body.classList.add('slip-live'); setSlip(); });
+  reg.addEventListener('change', function(){ document.body.classList.remove('slip-live'); });
+  setSlip();
+}
 
 /* thursday note */
 var form = document.getElementById('signup');
