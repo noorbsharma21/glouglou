@@ -123,7 +123,9 @@ body.off-3 .chip-3 span,body.off-4 .chip-4 span{ opacity:.45; text-decoration:li
 }
 .slug span{ flex:none; }
 .slug b{ color:var(--pink); font-weight:800; }
-.slug i{ color:var(--blue); font-style:normal; }
+/* blue type on the aubergine frame is 2.0:1 — the ink disappears
+   into the ground it shares. Same answer: blue becomes the field. */
+.slug i{ background:var(--blue); color:var(--paper); font-style:normal; padding:3px 7px; }
 
 /* foot: the step wedge. the recipe, printed. */
 .wedge{
@@ -279,9 +281,12 @@ p{ margin:0 0 .85em; }
   padding:16px 0 clamp(22px,3.2vw,38px);
   font-family:var(--mono); font-weight:600; font-size:11px; letter-spacing:.13em;
 }
-/* blue on acid is 4.0:1 — under AA. Knocked out of aubergine instead. */
+/* Blue type on acid is 4.0:1 — under AA. Setting it in aubergine
+   would pass but would take the blue off the masthead altogether.
+   So the blue becomes the field and the type is knocked out of it:
+   7.7:1, and the ink is more present than it was as text. */
 .mast-foot em{
-  font-style:normal; background:var(--aub); color:var(--acid); padding:4px 7px;
+  font-style:normal; background:var(--blue); color:var(--paper); padding:4px 7px;
   -webkit-box-decoration-break:clone; box-decoration-break:clone;  /* each wrapped fragment keeps its box */
 }
 
@@ -294,6 +299,9 @@ p{ margin:0 0 .85em; }
 .four > li{ position:relative; overflow:hidden; padding:clamp(18px,2.4vw,30px) clamp(10px,1.4vw,20px) clamp(12px,1.8vw,20px); }
 .four > li + li{ border-left:3px solid var(--paper); }
 .four svg{ display:block; width:100%; height:auto; max-height:30vh; }
+/* each bottle gets its own ground, so the aubergine one has somewhere
+   to sit — on the blue field it was 1.5:1 and simply not there. */
+.four > li > svg,.four > li > .cap{ position:relative; z-index:2; }
 .four .cap{
   display:flex; justify-content:space-between; align-items:baseline;
   margin-top:13px; padding-top:7px; border-top:2px solid currentColor;
@@ -461,7 +469,20 @@ p{ margin:0 0 .85em; }
 }
 .inks div{ padding:0 0 11px; }
 .inks div + div{ border-left:3px solid var(--paper); }
-.inks b{ display:block; height:clamp(54px,7vw,84px); position:relative; overflow:hidden; }
+/* Ink laid on the plum ground cannot be read: aubergine against it
+   is 1.2:1, blue 1.7:1 — the recipe could not show two of its own
+   four inks. A colour bar is pulled on the stock, so the stock goes
+   behind it. Every ink then reads at full strength. */
+.inks b{ display:block; background:var(--paper); padding:9px; }
+/* No one ground serves four inks: on stock the aubergine reads at
+   11.8:1 but the acid falls to 1.06:1. A colour bar answers this the
+   way it always has — the patch is keylined, so its edge is defined
+   whatever the ink, and the ink itself is still shown undistorted. */
+.inks .sw{
+  display:block; height:clamp(46px,6vw,74px);
+  position:relative; overflow:hidden;
+  border:2px solid var(--aub);
+}
 .inks .lbl{ display:block; padding:10px 10px 0; font-family:var(--mono); font-weight:800; font-size:10.5px; letter-spacing:.1em; }
 .inks .hex{ display:block; padding:5px 10px 0; font-family:var(--mono); font-weight:600; font-size:10.5px; letter-spacing:.06em; color:var(--acid); }
 @media (max-width:720px){ .inks{ grid-template-columns:repeat(2,1fr); } .inks div:nth-child(3){ border-left:0; } .inks div:nth-child(n+3){ border-top:3px solid var(--paper); } }
@@ -489,11 +510,13 @@ p{ margin:0 0 .85em; }
   transition:background .1s steps(2), color .1s steps(2);
 }
 .plates .plate-btn:first-child{ border-left:0; }
-.plate-btn b{ display:block; width:100%; height:26px; }
-.plate-btn i{ font-style:normal; font-weight:600; font-size:9.5px; letter-spacing:.06em; opacity:.75; }
+.plate-btn b{ display:block; width:100%; background:var(--paper); padding:5px; }
+.plate-btn .sw{ display:block; height:22px; border:2px solid var(--aub); }
+.plate-btn i{ font-style:normal; font-weight:600; font-size:9.5px; letter-spacing:.06em; opacity:.8; }
 .plate-btn:hover{ background:var(--paper); color:var(--aub); }
-.plate-btn[aria-pressed="false"]{ color:rgba(233,220,192,.5); }
-.plate-btn[aria-pressed="false"] b{ opacity:.16; }
+.plate-btn[aria-pressed="false"]{ color:rgba(233,220,192,.55); }
+/* plate off the press: bare stock where the ink would have gone */
+.plate-btn[aria-pressed="false"] .sw{ opacity:0; }
 .plate-btn[aria-pressed="false"]:hover{ color:var(--aub); }
 
 .regctl{ padding:13px 14px 15px; border-left:3px solid var(--paper); }
@@ -699,20 +722,24 @@ body.slip-live .wordrow span{ transition:none; transition-delay:0s; }
       </div>
 
       <ul class="four">
-        <li>
-          <svg viewBox="0 0 80 164" role="img" aria-label="Bottle, rack one"><g fill="var(--pink)"><path d="M31 2h18v30l10 18v114H21V50l10-18z"/></g><g fill="var(--acid)" style="mix-blend-mode:multiply"><rect x="26" y="78" width="28" height="40"/><rect x="31" y="2" width="18" height="13"/></g></svg>
+        <li style="background:var(--acid);color:var(--aub)">
+          <div class="scr" style="--ink:var(--pink);--a:75deg;--g:6px;--r:1.2px"></div>
+          <svg viewBox="0 0 80 164" role="img" aria-label="Bottle, rack one"><g fill="var(--aub)"><path d="M31 2h18v30l10 18v114H21V50l10-18z"/></g><g fill="var(--pink)"><rect x="26" y="78" width="28" height="40"/><rect x="31" y="2" width="18" height="13"/></g></svg>
           <div class="cap"><span>01</span><span>BUBBLES</span></div>
         </li>
-        <li>
+        <li style="background:var(--blue);color:var(--paper)">
+          <div class="scr" style="--ink:var(--aub);--a:45deg;--g:6px;--r:1.4px"></div>
           <svg viewBox="0 0 80 164" role="img" aria-label="Bottle, rack two"><g fill="var(--acid)"><path d="M31 2h18v30l10 18v114H21V50l10-18z"/></g><g fill="var(--pink)" style="mix-blend-mode:multiply"><rect x="26" y="78" width="28" height="40"/><rect x="31" y="2" width="18" height="13"/></g></svg>
           <div class="cap"><span>02</span><span>SKINS</span></div>
         </li>
-        <li>
-          <svg viewBox="0 0 80 164" role="img" aria-label="Bottle, rack three"><g fill="var(--paper)"><path d="M31 2h18v30l10 18v114H21V50l10-18z"/></g><g fill="var(--pink)" style="mix-blend-mode:multiply"><rect x="26" y="78" width="28" height="40"/><rect x="31" y="2" width="18" height="13"/></g></svg>
+        <li style="background:var(--aub);color:var(--acid)">
+          <div class="scr" style="--ink:var(--pink);--a:15deg;--g:6px;--r:1.5px;mix-blend-mode:screen;opacity:.4"></div>
+          <svg viewBox="0 0 80 164" role="img" aria-label="Bottle, rack three"><g fill="var(--pink)"><path d="M31 2h18v30l10 18v114H21V50l10-18z"/></g><g fill="var(--acid)" style="mix-blend-mode:multiply"><rect x="26" y="78" width="28" height="40"/><rect x="31" y="2" width="18" height="13"/></g></svg>
           <div class="cap"><span>03</span><span>CHILLED REDS</span></div>
         </li>
-        <li>
-          <svg viewBox="0 0 80 164" role="img" aria-label="Bottle, rack four"><g fill="var(--aub)"><path d="M31 2h18v30l10 18v114H21V50l10-18z"/></g><g fill="var(--acid)" style="mix-blend-mode:multiply"><rect x="26" y="78" width="28" height="40"/><rect x="31" y="2" width="18" height="13"/></g></svg>
+        <li style="background:var(--paper);color:var(--aub)">
+          <div class="scr" style="--ink:var(--acid);--a:0deg;--g:6px;--r:1.6px"></div>
+          <svg viewBox="0 0 80 164" role="img" aria-label="Bottle, rack four"><g fill="var(--blue)"><path d="M31 2h18v30l10 18v114H21V50l10-18z"/></g><g fill="var(--acid)"><rect x="26" y="78" width="28" height="40"/><rect x="31" y="2" width="18" height="13"/></g></svg>
           <div class="cap"><span>04</span><span>WHITES</span></div>
         </li>
       </ul>
@@ -789,11 +816,11 @@ body.slip-live .wordrow span{ transition:none; transition-delay:0s; }
         <li style="background:var(--paper)">
           <span class="nm" style="color:var(--aub)">OMAR</span>
           <svg viewBox="0 0 120 170" role="img" aria-label="Omar, drawn head on">
-            <g fill="var(--pink)"><path d="M4 170v-36l36-16h40l36 16v36z"/><path d="M52 118v-18h16v18z"/><path d="M32 38 46 24h28l14 14v48L74 100H46L32 86z"/></g>
-            <g fill="var(--blue)" style="mix-blend-mode:multiply"><path d="M28 44 44 16h32l16 28v14l-8-10V32H36v20l-8 10z"/></g>
-            <g fill="var(--aub)"><rect x="45" y="56" width="10" height="8"/><rect x="65" y="56" width="10" height="8"/></g>
-            <g fill="var(--aub)"><rect x="52" y="80" width="16" height="5"/></g>
-            <g fill="var(--aub)" style="mix-blend-mode:multiply"><path d="M50 120h20v14l-6 14h-8l-6-14z"/><rect x="58" y="148" width="4" height="14"/><rect x="49" y="162" width="22" height="6"/></g>
+            <g fill="var(--aub)"><path d="M4 170v-36l36-16h40l36 16v36z"/><path d="M52 118v-18h16v18z"/><path d="M32 38 46 24h28l14 14v48L74 100H46L32 86z"/></g>
+            <g fill="var(--pink)"><path d="M28 44 44 16h32l16 28v14l-8-10V32H36v20l-8 10z"/></g>
+            <g fill="var(--acid)"><rect x="45" y="56" width="10" height="8"/><rect x="65" y="56" width="10" height="8"/></g>
+            <g fill="var(--pink)"><rect x="52" y="80" width="16" height="5"/></g>
+            <g fill="var(--blue)"><path d="M50 120h20v14l-6 14h-8l-6-14z"/><rect x="58" y="148" width="4" height="14"/><rect x="49" y="162" width="22" height="6"/></g>
             <g fill="var(--pink)"><path d="M53 134h14l-4 10h-6z"/></g>
           </svg>
         </li>
@@ -976,22 +1003,22 @@ body.slip-live .wordrow span{ transition:none; transition-delay:0s; }
 
       <div class="inks">
         <div>
-          <b style="background:var(--pink)"><span class="scr" style="--ink:var(--aub);--a:15deg;--g:5px;--r:1.3px"></span></b>
+          <b><span class="sw" style="background:var(--pink)"><span class="scr" style="--ink:var(--aub);--a:15deg;--g:5px;--r:1.3px"></span></span></b>
           <span class="lbl" style="color:var(--paper)">INK 1 · FLUORO PINK</span>
           <span class="hex">#FF3D7F · SCREEN 15°</span>
         </div>
         <div>
-          <b style="background:var(--acid)"><span class="scr" style="--ink:var(--aub);--a:75deg;--g:5px;--r:1.3px"></span></b>
+          <b><span class="sw" style="background:var(--acid)"><span class="scr" style="--ink:var(--aub);--a:75deg;--g:5px;--r:1.3px"></span></span></b>
           <span class="lbl" style="color:var(--paper)">INK 2 · ACID</span>
           <span class="hex">#D7E03A · SCREEN 75°</span>
         </div>
         <div>
-          <b style="background:var(--aub);outline:2px solid var(--paper);outline-offset:-2px"><span class="scr" style="--ink:var(--paper);--a:45deg;--g:5px;--r:1.3px;mix-blend-mode:screen"></span></b>
+          <b><span class="sw" style="background:var(--aub)"><span class="scr" style="--ink:var(--paper);--a:45deg;--g:5px;--r:1.3px;mix-blend-mode:screen"></span></span></b>
           <span class="lbl" style="color:var(--paper)">INK 3 · AUBERGINE</span>
           <span class="hex">#2E1A34 · SCREEN 45°</span>
         </div>
         <div>
-          <b style="background:var(--blue)"><span class="scr" style="--ink:var(--aub);--a:0deg;--g:5px;--r:1.3px"></span></b>
+          <b><span class="sw" style="background:var(--blue)"><span class="scr" style="--ink:var(--aub);--a:0deg;--g:5px;--r:1.3px"></span></span></b>
           <span class="lbl" style="color:var(--paper)">INK 4 · MEDIUM BLUE</span>
           <span class="hex">#1E4BA8 · SCREEN 00°</span>
         </div>
@@ -1004,10 +1031,10 @@ body.slip-live .wordrow span{ transition:none; transition-delay:0s; }
         </div>
         <div class="press-body">
           <div class="plates">
-            <button class="plate-btn" type="button" data-plate="1" aria-pressed="true"><b style="background:var(--pink)"></b>INK 1<i>FLUORO PINK</i></button>
-            <button class="plate-btn" type="button" data-plate="2" aria-pressed="true"><b style="background:var(--acid)"></b>INK 2<i>ACID</i></button>
-            <button class="plate-btn" type="button" data-plate="3" aria-pressed="true"><b style="background:var(--aub);outline:2px solid var(--paper);outline-offset:-2px"></b>INK 3<i>AUBERGINE</i></button>
-            <button class="plate-btn" type="button" data-plate="4" aria-pressed="true"><b style="background:var(--blue)"></b>INK 4<i>MEDIUM BLUE</i></button>
+            <button class="plate-btn" type="button" data-plate="1" aria-pressed="true"><b><span class="sw" style="background:var(--pink)"></span></b>INK 1<i>FLUORO PINK</i></button>
+            <button class="plate-btn" type="button" data-plate="2" aria-pressed="true"><b><span class="sw" style="background:var(--acid)"></span></b>INK 2<i>ACID</i></button>
+            <button class="plate-btn" type="button" data-plate="3" aria-pressed="true"><b><span class="sw" style="background:var(--aub)"></span></b>INK 3<i>AUBERGINE</i></button>
+            <button class="plate-btn" type="button" data-plate="4" aria-pressed="true"><b><span class="sw" style="background:var(--blue)"></span></b>INK 4<i>MEDIUM BLUE</i></button>
           </div>
           <div class="regctl">
             <label class="lbl" for="reg"><span>REGISTRATION</span><output id="regout" for="reg">IN REGISTER</output></label>
