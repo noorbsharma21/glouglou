@@ -5,6 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GLOU GLOU — natural wine, 2114 Spruce St, Philadelphia</title>
 <meta name="description" content="A natural wine shop on Spruce Street in Rittenhouse, Philadelphia. Four racks, four inks, four of us behind the counter. Tastings Thursday 6–9.">
+<meta name="theme-color" content="#2E1A34">
+<meta name="color-scheme" content="only light">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="GLOU GLOU — natural wine, Rittenhouse, Philadelphia">
+<meta property="og:description" content="Four racks, four inks, four of us behind the counter. A four-ink risograph broadside: pull a plate off the press, slip the register, open any bottle for a note.">
+<meta property="og:url" content="https://noorbsharma21.github.io/glouglou/">
+<meta property="og:image" content="https://noorbsharma21.github.io/glouglou/docs/masthead.jpg">
+<meta property="og:image:alt" content="A four-ink risograph masthead: the word GLOU repeated across an acid-yellow field in pink, blue and aubergine, cut by the frame at both edges.">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- a registration target, drawn in the frame's own inks -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%232E1A34'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%23FF3D7F' stroke-width='2.5'/%3E%3Cpath d='M16 2v28M2 16h28' stroke='%23D7E03A' stroke-width='2.5'/%3E%3C/svg%3E">
+
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <style>
 /* ───────────────────────────────────────────────────────────────
@@ -911,7 +925,7 @@ body.slip-live .wordrow span{ transition:none; transition-delay:0s; }
           <li>RACK 04 &nbsp;·&nbsp; WHITES WITH TEETH &nbsp;·&nbsp; FOUR BOTTLES</li>
         </ul>
         <div>
-          <p class="kicker" style="color:var(--pink)">ON THE SHELF THIS WEEK</p>
+          <p class="kicker" style="color:var(--pink)">ON THE SHELF THIS WEEK · OPEN ANY BOTTLE FOR THE NOTE</p>
           <h2 style="color:var(--acid)">Sixteen bottles.<br>Four at a&nbsp;time.</h2>
         </div>
       </div>
@@ -1143,8 +1157,13 @@ body.slip-live .wordrow span{ transition:none; transition-delay:0s; }
 
 <script>
 /* the plate seats itself once the sheet is in */
+function seatPlate(){ document.body.classList.remove('loading'); }
+/* rAF does not fire in a background tab, and this class holds the
+   masthead out of register. Without the timeout, anyone opening the
+   link in a background tab gets a permanently misregistered page. */
+setTimeout(seatPlate, 1200);
 requestAnimationFrame(function(){
-  requestAnimationFrame(function(){ document.body.classList.remove('loading'); });
+  requestAnimationFrame(seatPlate);
 });
 
 /* each band registers as it comes onto the press */
