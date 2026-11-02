@@ -5,10 +5,41 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GLOU GLOU — natural wine, 2114 Spruce St, Philadelphia</title>
 <meta name="description" content="A natural wine shop on Spruce Street in Rittenhouse, Philadelphia. Four racks, four inks, four of us behind the counter. Tastings Thursday 6–9.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;600;800;900&family=Martian+Mono:wght@400;600;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <style>
+/* ───────────────────────────────────────────────────────────────
+   TYPE.  Two libre faces from Velvetyne, served from the foundry's
+   own repositories and pinned to commits. They were drawn by people
+   rather than optimised into a retail superfamily, which is the
+   whole reason they are here — the quirks are the point, and so are
+   the gaps. Both OFL.
+
+   BluuNext — a bold serif with real flavour. Bold is the only cut,
+     so it is declared across the whole weight range to stop the
+     browser synthesising a faux bold on top of it. It carries
+     everything: display, names, labels, running text.
+   Commune Nuit Debout — condensed and curveless, built for protest
+     posters. Used only where type is set huge, which is the one
+     place a condensed face of this weight is unambiguously better.
+
+   Two faces were tried and dropped. Format 1452 has no É or Ä and
+   renders the middot the label system runs on as a notdef circle.
+   Nuit Debout was tried for the labels too and pulled back out: at
+   11-14px it is wispy and hard, which is the same mistake as the
+   coarse screens, arrived at from the other direction.
+   ─────────────────────────────────────────────────────────────── */
+@font-face{
+  font-family:"BluuNext";
+  src:url('https://cdn.jsdelivr.net/gh/velvetyne/BluuNext@a1d39f0/Fonts/webfonts/bluunext-bold-webfont.woff2') format('woff2'),
+      url('https://cdn.jsdelivr.net/gh/velvetyne/BluuNext@a1d39f0/Fonts/webfonts/bluunext-bold-webfont.woff') format('woff');
+  font-weight:400 900; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:"NuitDebout";
+  src:url('https://cdn.jsdelivr.net/gh/velvetyne/Commune-Nuit-Debout@260989f/fonts/webfonts/NuitDebout/Commune-Nuit_Debout_web.woff2') format('woff2'),
+      url('https://cdn.jsdelivr.net/gh/velvetyne/Commune-Nuit-Debout@260989f/fonts/webfonts/NuitDebout/Commune-Nuit_Debout_web.woff') format('woff');
+  font-weight:400 900; font-style:normal; font-display:swap;
+}
 /* ───────────────────────────────────────────────────────────────
    GLOU GLOU — four inks, one pass.
    INK 1 FLUORO PINK  #FF3D7F   screen 15°
@@ -30,9 +61,12 @@
   --ft:46px;  /* frame, head  — carries the marks  */
   --fb:56px;  /* frame, foot  — carries the wedge  */
 
-  --display:"Big Shoulders Display","Big Shoulders","Haettenschweiler","Arial Narrow",sans-serif;
-  --mono:"Martian Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
-  --text:"Newsreader",Georgia,"Times New Roman",serif;
+  /* set huge, and only there */
+  --poster:"NuitDebout","Haettenschweiler","Arial Narrow",sans-serif;
+  /* everything else, at every size */
+  --display:"BluuNext","Times New Roman",serif;
+  --mono:"BluuNext","Times New Roman",serif;
+  --text:"BluuNext","Times New Roman",serif;
 }
 
 @media (max-width:860px){
@@ -178,8 +212,8 @@ body.off-3 .chip-3 span,body.off-4 .chip-4 span{ opacity:.45; text-decoration:li
   writing-mode:vertical-rl; transform:rotate(180deg);
   display:flex; align-items:center; justify-content:flex-start;
   padding-bottom:10px;
-  font-family:var(--display); font-weight:900;
-  font-size:clamp(16px,2.6vw,26px); letter-spacing:.06em;
+  font-family:var(--poster); font-weight:900;
+  font-size:clamp(18px,2.8vw,30px); letter-spacing:.04em;
   line-height:var(--fr);
   color:var(--acid);
   white-space:nowrap;
@@ -224,9 +258,10 @@ body.off-3 .chip-3 span,body.off-4 .chip-4 span{ opacity:.45; text-decoration:li
 }
 
 /* ── TYPE ────────────────────────────────────────────────────── */
-/* Martian Mono is a wide face with small apertures. Below ~10.5px,
-   and above ~.14em of tracking at that size, it stops being readable
-   and becomes pattern. Everything small is set against that limit. */
+/* Small type is set against a floor of ~10.5px and ~.14em of
+   tracking. Below that it stops being readable and becomes pattern.
+   BluuNext is a wide, bold serif, so it holds these sizes well —
+   that is why it carries the labels and not the condensed face. */
 .kicker{ font-family:var(--mono); font-weight:800; font-size:11px; letter-spacing:.2em; margin:0; }
 h2{
   font-family:var(--display); font-weight:900;
@@ -273,11 +308,15 @@ p{ margin:0 0 .85em; }
 /* ── MASTHEAD ────────────────────────────────────────────────── */
 .masthead{ padding:clamp(26px,4.4vw,52px) 0 0; }
 .wordrow{
-  display:flex; justify-content:center; align-items:baseline; gap:.04em;
+  display:flex; justify-content:center; align-items:baseline; gap:.13em;
   margin:0 0 0 -12%; width:124%;      /* the frame will cut it */
-  font-family:var(--display); font-weight:900;
-  font-size:max(4.4rem,11.8vw);   /* no cap: the crop must hold at every width */
-  line-height:.79; letter-spacing:-.05em; white-space:nowrap;
+  font-family:var(--poster); font-weight:900;
+  /* No cap, so the crop holds at every width. This face is narrow
+     enough that four words would sit comfortably inside the frame;
+     cropping them by size alone would need 31vw. So the row says it
+     eight times instead — four twice — and the frame cuts the ends. */
+  font-size:max(3.4rem,16vw);
+  line-height:.82; letter-spacing:-.005em; white-space:nowrap;
 }
 .wordrow span{ display:block; mix-blend-mode:multiply; }
 .w1{ color:var(--pink); } .w2{ color:var(--blue); }
@@ -446,8 +485,8 @@ p{ margin:0 0 .85em; }
 }
 .marquee div{ display:inline-block; animation:drift 28s linear infinite; }
 .marquee span{
-  font-family:var(--display); font-weight:900;
-  font-size:clamp(3rem,8.4vw,6.4rem); line-height:.84; letter-spacing:-.03em;
+  font-family:var(--poster); font-weight:900;
+  font-size:clamp(3rem,8.4vw,6.4rem); line-height:.84; letter-spacing:0;
   padding-right:.22em; mix-blend-mode:screen;
 }
 .marquee span:nth-child(4n+1){ color:var(--acid); }
@@ -715,6 +754,10 @@ body.slip-live .wordrow span{ transition:none; transition-delay:0s; }
     <h1 class="wordrow">
       <span class="w1">GLOU</span>
       <span class="w2">GLOU</span>
+      <span class="w3" aria-hidden="true">GLOU</span>
+      <span class="w4" aria-hidden="true">GLOU</span>
+      <span class="w1" aria-hidden="true">GLOU</span>
+      <span class="w2" aria-hidden="true">GLOU</span>
       <span class="w3" aria-hidden="true">GLOU</span>
       <span class="w4" aria-hidden="true">GLOU</span>
     </h1>
