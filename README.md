@@ -71,4 +71,4 @@ Then visit `http://localhost:4175`. The only network requests the page makes are
 
 ## Licence
 
-Code is MIT, see [LICENSE](LICENSE). The typefaces are under the SIL Open Font Licence and belong to their designers; they are linked, not bundled. GLOU GLOU is a fictional shop — the address, phone number and wine list are invented.
+Code is MIT, see [LICENSE](LICENSE). The typefaces are under the SIL Open Font Licence and belong to their designers; they are linked, not bundled. GLOU GLOU is a fictional shop — the address, phone number and wine list are invented. Full terms in [NOTICE](NOTICE).
